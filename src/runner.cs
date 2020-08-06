@@ -219,7 +219,7 @@ class MainClass {
             s = (Hashtable)stk.Pop();
             if(s["type"].ToString() != "decimal") Error(i,aline,"Cannot add not decimal(s):");
             arr[0] = decimal.Parse(s["data"].ToString());
-            _c = _c.Append("    _da[0] = (decimal)((Hashtable)_s.Pop())[\"data\"];");
+            _c = _c.Append("    _da[0] = Convert.ToDecimal(((Hashtable)_s.Pop())[\"data\"]);");
           }else if(Check(cp[0],typeof(decimal))){
             arr[0] = decimal.Parse(cp[0]);
             _c = _c.Append("    _da[0] = " + cp[0] + ";");
@@ -231,7 +231,7 @@ class MainClass {
             s = (Hashtable)stk.Pop();
             if(s["type"].ToString() != "decimal") Error(i,aline,"Cannot add not decimal(s):");
             arr[1] = decimal.Parse(s["data"].ToString());
-            _c = _c.Append("    _da[1] = (decimal)((Hashtable)_s.Pop())[\"data\"];");
+            _c = _c.Append("    _da[1] = Convert.ToDecimal(((Hashtable)_s.Pop())[\"data\"]);");
             }else if(Check(cp[1],typeof(decimal))){
             arr[1] = decimal.Parse(cp[1]);
             _c = _c.Append("    _da[1] = " + cp[1] + ";");
@@ -250,10 +250,10 @@ class MainClass {
             s = (Hashtable)stk.Pop();
             if(s["type"].ToString() != "decimal") Error(i,aline,"Cannot subtract not decimal(s):");
             arr[0] = decimal.Parse(s["data"].ToString());
-            _c = _c.Append("    _da[0] = (decimal)((Hashtable)_s.Pop())[\"data\"];");
+            _c = _c.Append("    _da[0] = decimal.Parse(((Hashtable)_s.Pop())[\"data\"].ToString());");
           }else if(Check(cp[0],typeof(decimal))){
             arr[0] = decimal.Parse(cp[0]);
-            _c = _c.Append("    _da[0] = " + cp[0] + ";");
+            _c = _c.Append("    _da[1] = " + cp[0] + ";");
           }else{
             Error(i,aline,"Unknown format:");
           }
@@ -262,15 +262,15 @@ class MainClass {
             s = (Hashtable)stk.Pop();
             if(s["type"].ToString() != "decimal") Error(i,aline,"Cannot subtract not decimal(s):");
             arr[1] = decimal.Parse(s["data"].ToString());
-            _c = _c.Append("    _da[1] = (decimal)((Hashtable)_s.Pop())[\"data\"];");
+            _c = _c.Append("    _da[1] = decimal.Parse(((Hashtable)_s.Pop())[\"data\"].ToString());");
           }else if(Check(cp[1],typeof(decimal))){
             arr[1] = decimal.Parse(cp[1]);
-            _c = _c.Append("    _da[1] = " + cp[1] + ";");
+            _c = _c.Append("    _da[0] = " + cp[1] + ";");
           }else{
             Error(i,aline,"Unknown format:");
           }
-          stk.Push(Gen((arr[0] - arr[1]).ToString(),"decimal"));
-          _c = _c.Append("    _s.Push(Gen((_da[0] - _da[1]).ToString(),\"decimal\"));");
+          stk.Push(Gen((arr[1] - arr[0]).ToString(),"decimal"));
+          _c = _c.Append("    _s.Push(Gen((_da[1] - _da[0]).ToString(),\"decimal\"));");
         }else if(rp.StartsWith("mul ")){
           string[] cp = rp.Ccut("mul");
           if(cp.Length != 2) Error(i,aline,"Arguments must be 2:");
@@ -281,7 +281,7 @@ class MainClass {
             s = (Hashtable)stk.Pop();
             if(s["type"].ToString() != "decimal") Error(i,aline,"Cannot multiply not decimal(s):");
             arr[0] = decimal.Parse(s["data"].ToString());
-            _c = _c.Append("    _da[0] = (decimal)((Hashtable)_s.Pop())[\"data\"];");
+            _c = _c.Append("    _da[0] = decimal.Parse(((Hashtable)_s.Pop())[\"data\"].ToString());");
           }else if(Check(cp[0],typeof(decimal))){
             arr[0] = decimal.Parse(cp[0]);
             _c = _c.Append("    _da[0] = " + cp[0] + ";");
@@ -293,7 +293,7 @@ class MainClass {
             s = (Hashtable)stk.Pop();
             if(s["type"].ToString() != "decimal") Error(i,aline,"Cannot multiply not decimal(s):");
             arr[1] = decimal.Parse(s["data"].ToString());
-            _c = _c.Append("    _da[1] = (decimal)((Hashtable)_s.Pop())[\"data\"];");
+            _c = _c.Append("    _da[1] = decimal.Parse(((Hashtable)_s.Pop())[\"data\"].ToString());");
           }else if(Check(cp[1],typeof(decimal))){
             arr[1] = decimal.Parse(cp[1]);
             _c = _c.Append("    _da[1] = " + cp[1] + ";");
@@ -312,10 +312,10 @@ class MainClass {
             s = (Hashtable)stk.Pop();
             if(s["type"].ToString() != "decimal") Error(i,aline,"Cannot divide not decimal(s):");
             arr[0] = decimal.Parse(s["data"].ToString());
-            _c = _c.Append("    _da[0] = (decimal)((Hashtable)_s.Pop())[\"data\"];");
+            _c = _c.Append("    _da[0] = decimal.Parse(((Hashtable)_s.Pop())[\"data\"].ToString());");
           }else if(Check(cp[0],typeof(decimal))){
             arr[0] = decimal.Parse(cp[0]);
-            _c = _c.Append("    _da[0] = " + cp[0] + ";");
+            _c = _c.Append("    _da[1] = " + cp[0] + ";");
           }else{
             Error(i,aline,"Unknown format:");
           }
@@ -324,15 +324,15 @@ class MainClass {
             s = (Hashtable)stk.Pop();
             if(s["type"].ToString() != "decimal") Error(i,aline,"Cannot divide not decimal(s):");
             arr[1] = decimal.Parse(s["data"].ToString());
-            _c = _c.Append("    _da[1] = (decimal)((Hashtable)_s.Pop())[\"data\"];");
+            _c = _c.Append("    _da[1] = decimal.Parse(((Hashtable)_s.Pop())[\"data\"].ToString());");
           }else if(Check(cp[1],typeof(decimal))){
             arr[1] = decimal.Parse(cp[1]);
-            _c = _c.Append("    _da[1] = " + cp[1] + ";");
+            _c = _c.Append("    _da[0] = " + cp[1] + ";");
           }else{
             Error(i,aline,"Unknown format:");
           }
-          stk.Push(Gen((arr[0] / arr[1]).ToString(),"decimal"));
-          _c = _c.Append("    _s.Push(Gen((_da[0] / _da[1]).ToString(),\"decimal\"));");
+          stk.Push(Gen((arr[1] / arr[0]).ToString(),"decimal"));
+          _c = _c.Append("    _s.Push(Gen((_da[1] / _da[0]).ToString(),\"decimal\"));");
         }else if(rp.StartsWith("mod ")){
           string[] cp = rp.Ccut("mod");
           if(cp.Length != 2) Error(i,aline,"Arguments must be 2:");
@@ -343,7 +343,7 @@ class MainClass {
             s = (Hashtable)stk.Pop();
             if(s["type"].ToString() != "decimal") Error(i,aline,"Cannot mod not decimal(s):");
             arr[0] = decimal.Parse(s["data"].ToString());
-            _c = _c.Append("    _da[0] = (decimal)((Hashtable)_s.Pop())[\"data\"];");
+            _c = _c.Append("    _da[0] = decimal.Parse(((Hashtable)_s.Pop())[\"data\"].ToString());");
           }else if(Check(cp[0],typeof(decimal))){
             arr[0] = decimal.Parse(cp[0]);
             _c = _c.Append("    _da[0] = " + cp[0] + ";");
@@ -355,15 +355,15 @@ class MainClass {
             s = (Hashtable)stk.Pop();
             if(s["type"].ToString() != "decimal") Error(i,aline,"Cannot mod not decimal(s):");
             arr[1] = decimal.Parse(s["data"].ToString());
-            _c = _c.Append("    _da[1] = (decimal)((Hashtable)_s.Pop())[\"data\"];");
+            _c = _c.Append("    _da[1] = decimal.Parse(((Hashtable)_s.Pop())[\"data\"].ToString());");
           }else if(Check(cp[1],typeof(decimal))){
             arr[1] = decimal.Parse(cp[1]);
             _c = _c.Append("    _da[1] = " + cp[1] + ";");
           }else{
             Error(i,aline,"Unknown format:");
           }
-          stk.Push(Gen((arr[0] % arr[1]).ToString(),"decimal"));
-          _c = _c.Append("    _s.Push(Gen((_da[0] % _da[1]).ToString(),\"decimal\"));");
+          stk.Push(Gen((arr[1] % arr[0]).ToString(),"decimal"));
+          _c = _c.Append("    _s.Push(Gen((_da[1] % _da[0]).ToString(),\"decimal\"));");
         }else if(rp.StartsWith("and ")){
           string[] cp = rp.Ccut("and");
           if(cp.Length != 2) Error(i,aline,"Arguments must be 2:");
@@ -374,7 +374,7 @@ class MainClass {
             s = (Hashtable)stk.Pop();
             if(s["type"].ToString() != "boolean") Error(i,aline,"Cannot process not boolean(s):");
             arr[0] = s["data"].ToString();
-            _c = _c.Append("    _sa[0] = (string)((Hashtable)_s.Pop())[\"data\"];");
+            _c = _c.Append("    _sa[0] = ((Hashtable)_s.Pop())[\"data\"].ToString();");
           }else if(cp[0] == "1" || cp[0] == "0"){
             arr[0] = cp[0];
             _c = _c.Append("    _sa[0] = \"" + cp[0] + "\";");
@@ -386,7 +386,7 @@ class MainClass {
             s = (Hashtable)stk.Pop();
             if(s["type"].ToString() != "boolean") Error(i,aline,"Cannot process not boolean(s):");
             arr[1] = s["data"].ToString();
-            _c = _c.Append("    _sa[1] = (string)((Hashtable)_s.Pop())[\"data\"];");
+            _c = _c.Append("    _sa[1] = ((Hashtable)_s.Pop())[\"data\"].ToString();");
           }else if(cp[1] == "1" || cp[1] == "0"){
             arr[1] = cp[1];
             _c = _c.Append("    _sa[1] = \"" + cp[1] + "\";");
