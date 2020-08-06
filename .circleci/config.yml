@@ -29,6 +29,9 @@
            name: Install nodejs
            command: sudo apt install nodejs
        - run:
+           name: Install toml parser
+           command: npm install toml
+       - run:
            name: Check program
            command: node .circleci/index.js
 
