@@ -1,6 +1,6 @@
 var fs = require("fs");
 var toml = require("toml");
-var tmp = toml.parse(fs.readFileSync("index.toml") + "");
+var tmp = toml.parse(fs.readFileSync(".circleci/index.toml") + "");
 for(var val in tmp){
   fs.writeFileSync("main.oba",val.code);
   var sp = require("child_process").spawnSync("mono",["obrya.exe","main.oba"]);
