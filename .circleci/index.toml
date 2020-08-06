@@ -1,0 +1,11 @@
+[hello]
+name = "hello"
+code = """
+.data:
+    .text hello
+.main:
+    mov 0,@
+    msg @
+    cr
+    lf
+    ret"""
