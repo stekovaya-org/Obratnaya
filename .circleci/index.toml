@@ -61,8 +61,8 @@ code = """.data:
     .decimal 2
     .decimal 3
 .main:
-    mov 1,@
     mov 0,@
+    mov 1,@
     div @,@
     msg @
     cr
