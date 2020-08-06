@@ -3,7 +3,7 @@ var toml = require("toml");
 var tmp = toml.parse(fs.readFileSync(".circleci/index.toml") + "");
 for(var val in tmp){
   fs.writeFileSync("main.oba",val.code);
-  var sp = require("child_process").spawnSync("mono",["obrya.exe","main.oba"]);
+  var sp = require("child_process").spawn("mono",["obrya.exe","main.oba"]);
   console.log("-----" + val.name);
   sp.stdout.on("data",e=>{
     process.stdout.write(e);
