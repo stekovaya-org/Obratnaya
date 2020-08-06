@@ -1,11 +1,3 @@
 [hello]
 name = "hello"
-code = """
-.data:
-    .text hello
-.main:
-    mov 0,@
-    msg @
-    cr
-    lf
-    ret"""
+code = ".data:\n    .text hello\n.main:\n    mov 0,@\n    msg @\n    cr\n    lf\n    ret"
