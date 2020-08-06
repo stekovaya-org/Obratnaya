@@ -16,7 +16,7 @@ function fc(i){
       console.log("\r\nError");
       process.exit(1);
     }else{
-      if(i != val.length) fc(i + 1);
+      if(i != val.length + 1) fc(i + 1);
     }
   });
 }
