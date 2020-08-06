@@ -1,11 +1,71 @@
 [hello]
-name = "hello"
+name = "hello world"
 code = """.data:
-    .text hello
+    .text Hello, world!
 .main:
     mov 0,@
     msg @
     cr
     lf
     ret"""
-output = "hello\r\n"
+output = "Hello, world!\r\n"
+
+[add]
+name = "add"
+code = """.data:
+    .decimal 2
+    .decimal 3
+.main:
+    mov 0,@
+    mov 1,@
+    add @,@
+    msg @
+    cr
+    lf
+    ret"""
+output = "5\r\n"
+
+[subtract]
+name = "subtract"
+code = """.data:
+    .decimal 2
+    .decimal 3
+.main:
+    mov 0,@
+    mov 1,@
+    sub @,@
+    msg @
+    cr
+    lf
+    ret"""
+output = "-1\r\n"
+
+[mul]
+name = "multiply"
+code = """.data:
+    .decimal 2
+    .decimal 3
+.main:
+    mov 0,@
+    mov 1,@
+    mul @,@
+    msg @
+    cr
+    lf
+    ret"""
+output = "6\r\n"
+
+[div]
+name = "divide"
+code = """.data:
+    .decimal 2
+    .decimal 3
+.main:
+    mov 1,@
+    mov 0,@
+    div @,@
+    msg @
+    cr
+    lf
+    ret"""
+output = "1.5\r\n"
