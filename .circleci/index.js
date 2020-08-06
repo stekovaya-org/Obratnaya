@@ -1,7 +1,8 @@
 var fs = require("fs");
 var toml = require("toml");
 var tmp = toml.parse(fs.readFileSync(".circleci/index.toml") + "");
-for(var val in tmp){
+function fc(i){
+  var val = Object.keys(tmp)[i];
   var result = "";
   fs.writeFileSync("main.oba",tmp[val].code);
   var sp = require("child_process").spawn("mono",["obrya.exe","main.oba"]);
@@ -14,6 +15,9 @@ for(var val in tmp){
     if(exitc != 0 || result !== tmp[val].output){
       console.log("\r\nError");
       process.exit(1);
+    }else{
+      if(i != val.length) fc(i + 1);
     }
   });
 }
+fc(0);
