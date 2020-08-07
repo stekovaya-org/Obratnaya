@@ -1,1 +1,1 @@
-run = "clear && LD_PRELOAD=\"\" && mcs src/*.cs -out:obrya.exe && mono obrya.exe main.oba && mcs out.cs && mono out.exe"
+run = "clear && LD_PRELOAD=\"\" && mcs src/*.cs -out:obrya.exe && mono obrya.exe main.oba && rm out.cs"

@@ -47,6 +47,10 @@ public class Obratnaya {
   }
   public static void Run(string code){
     var dstk = new System.Collections.Generic.List<Hashtable>();
+    var varh = new Hashtable{
+      ["pi"] = Gen(Math.PI.ToString(),"decimal"),
+      ["e"] = Gen(Math.E.ToString(),"decimal")
+    };
     var stk = new Stack();
     string sec = "";
     bool empo = false;
@@ -73,6 +77,10 @@ class MainClass {
   public static void Main(string[] args){
     decimal[] _da = {0,0};
     string[] _sa = {"""",""""};
+    var _vt = new Hashtable{
+      [""pi""] = Gen(Math.PI.ToString(),""decimal""),
+      [""e""] = Gen(Math.E.ToString(),""decimal"")
+    };
     var _d = new System.Collections.Generic.List<Hashtable>();
     var _s = new Stack();
 ";
@@ -126,6 +134,53 @@ class MainClass {
         }
         if(rp.StartsWith(";")){
           continue;
+        }else if(rp.StartsWith("get ")){
+          string[] cp = rp.Ccut("get");
+          if(cp.Length != 1) Error(i,aline,"Arguments must be 1:");
+          string[] arr = {""};
+          if(cp[0] == "@"){
+            stk.Underflow(1,i,aline);
+            arr[0] = ((Hashtable)stk.Pop())["data"].ToString();
+          }else if(Check(cp[0],typeof(decimal))){
+            arr[0] = cp[0];
+          }else{
+            Error(i,aline,"Unknown format:");
+          }
+          if(!varh.ContainsKey(arr[0])) Error(i,aline,"Undefined variable:");
+          stk.Push((Hashtable)varh[arr[0]]);
+        }else if(rp.StartsWith("define ")){
+          string[] cp = rp.Ccut("define");
+          string[] arr = {"",""};
+          string[] tar = {"",""};
+          if(cp.Length != 2) Error(i,aline,"Arguments must be 2:");
+          if(cp[0] == "@"){
+            stk.Underflow(1,i,aline);
+            var dc = stk.Pop();
+            arr[0] = ((Hashtable)dc)["data"].ToString();
+            tar[0] = ((Hashtable)dc)["type"].ToString();
+          }else if(Check(cp[0],typeof(decimal))){
+            arr[0] = cp[0];
+            tar[0] = "decimal";
+          }else{
+            Error(i,aline,"Unknown format:");
+          }
+          if(cp[1] == "@"){
+            stk.Underflow(1,i,aline);
+            var dc = stk.Pop();
+            arr[1] = ((Hashtable)dc)["data"].ToString();
+            tar[1] = ((Hashtable)dc)["data"].ToString();
+          }else if(Check(cp[1],typeof(decimal))){
+            arr[1] = cp[1];
+            tar[1] = "decimal";
+          }else{
+            Error(i,aline,"Unknown format:");
+          }
+          if(cp[0] == cp[1] && cp[0] == "@"){
+            arr = arr.Reverse().ToArray();
+            tar = tar.Reverse().ToArray();
+          }
+          if(varh.ContainsKey(arr[0])) Error(i,aline,"Cannot redefine variable:");
+          varh.Add(arr[0],Gen(arr[1],tar[1]));
         }else if(rp.StartsWith("mov ")){
           string[] cp = rp.Ccut("mov");
           if(cp.Length != 2) Error(i,aline,"Arguments must be 2:");
