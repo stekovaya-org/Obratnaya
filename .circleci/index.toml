@@ -94,3 +94,20 @@ code = """.data:
     lf
     ret"""
 output = "360deg is 6.28318530718\r\n"
+
+[apple]
+name = "apple"
+code = """.data:
+    .text Apple
+    .text 
+.main:
+    mov 0,@
+    mov 1,@
+    define @,@
+    mov 0,@
+    get @
+    msg @
+    cr
+    lf
+    ret"""
+output = "\r\n"
