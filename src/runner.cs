@@ -134,6 +134,26 @@ class MainClass {
         }
         if(rp.StartsWith(";")){
           continue;
+        }else if(rp.StartsWith("cond ")){
+          string[] cp = rp.Ccut("cond");
+          if(cp.Length != 1) Error(i,aline,"Arguments must be 1:");
+          stk.Underflow(1,i,aline);
+          var dfs = (Hashtable)stk.Pop();
+          if(dfs["type"].ToString() != "boolean") Error(i,aline,"Cannot process not boolean");
+          string[] arr = {""};
+          if(cp[0] == "@"){
+            stk.Underflow(1,i,aline);
+            dfs = (Hashtable)stk.Pop();
+            if(!Check(dfs["data"].ToString(),typeof(uint))) Error(i,aline,"Cannot jump to line by not positive integer:");
+            arr[0] = dfs["data"].ToString();
+          }else if(Check(cp[0],typeof(uint))){
+            arr[0] = cp[0];
+          }else{
+            Error(i,aline,"Unknown format:");
+          }
+          if(dfs["data"].ToString() == "1"){
+            i = int.Parse(arr[0]) - 2;
+          }
         }else if(rp.StartsWith("get ")){
           string[] cp = rp.Ccut("get");
           if(cp.Length != 1) Error(i,aline,"Arguments must be 1:");

@@ -315,3 +315,12 @@ get 0
 ; get @
 ; get decimal
 ```
+
+### cond (not supporting in transpile mode)
+If the boolean value at the top of the stack is 1 then jumps to line
+```
+cond @
+cond 0
+; cond @
+; cond decimal(uint)
+```
