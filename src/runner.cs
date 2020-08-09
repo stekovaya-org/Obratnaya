@@ -37,6 +37,12 @@ public class Obratnaya {
       ["type"] = type
     };
   }
+  public static Hashtable Gen(bool data,string type){
+    return new Hashtable{
+      ["data"] = (data ? "1" : "0"),
+      ["type"] = type
+    };
+  }
   public static void Error(int i,string line,string content){
     Console.Error.WriteLine("\x1b[1m:" + (i + 1) + ": \x1b[m\x1b[31m" + content + "\x1b[m\r\n" + line);
     Environment.Exit(1);
@@ -201,6 +207,169 @@ class MainClass {
           }
           if(varh.ContainsKey(arr[0])) Error(i,aline,"Cannot redefine variable:");
           varh.Add(arr[0],Gen(arr[1],tar[1]));
+        }else if(rp.StartsWith("< ")){
+          string[] cp = rp.Ccut("<");
+          if(cp.Length != 2) Error(i,aline,"Arguments must be 2:");
+          decimal[] arr = {0,0};
+          Hashtable s;
+          if(cp[0] == "@"){
+            stk.Underflow(1,i,aline);
+            s = (Hashtable)stk.Pop();
+            if(s["type"].ToString() != "decimal") Error(i,aline,"Cannot compare not decimal(s):");
+            arr[0] = decimal.Parse(s["data"].ToString());
+          }else if(Check(cp[0],typeof(decimal))){
+            arr[0] = decimal.Parse(cp[0]);
+          }else{
+            Error(i,aline,"Unknown format:");
+          }
+          if(cp[1] == "@"){
+            stk.Underflow(1,i,aline);
+            s = (Hashtable)stk.Pop();
+            if(s["type"].ToString() != "decimal") Error(i,aline,"Cannot compare not decimal(s):");
+            arr[1] = decimal.Parse(s["data"].ToString());
+          }else if(Check(cp[1],typeof(decimal))){
+            arr[1] = decimal.Parse(cp[1]);
+          }else{
+            Error(i,aline,"Unknown format:");
+          }
+          if(!(cp[0] == cp[1] && cp[0] == "@")) arr = arr.Reverse().ToArray();
+          stk.Push(Gen(arr[1] < arr[0],"boolean"));
+        }else if(rp.StartsWith("> ")){
+          string[] cp = rp.Ccut(">");
+          if(cp.Length != 2) Error(i,aline,"Arguments must be 2:");
+          decimal[] arr = {0,0};
+          Hashtable s;
+          if(cp[0] == "@"){
+            stk.Underflow(1,i,aline);
+            s = (Hashtable)stk.Pop();
+            if(s["type"].ToString() != "decimal") Error(i,aline,"Cannot compare not decimal(s):");
+            arr[0] = decimal.Parse(s["data"].ToString());
+          }else if(Check(cp[0],typeof(decimal))){
+            arr[0] = decimal.Parse(cp[0]);
+          }else{
+            Error(i,aline,"Unknown format:");
+          }
+          if(cp[1] == "@"){
+            stk.Underflow(1,i,aline);
+            s = (Hashtable)stk.Pop();
+            if(s["type"].ToString() != "decimal") Error(i,aline,"Cannot compare not decimal(s):");
+            arr[1] = decimal.Parse(s["data"].ToString());
+          }else if(Check(cp[1],typeof(decimal))){
+            arr[1] = decimal.Parse(cp[1]);
+          }else{
+            Error(i,aline,"Unknown format:");
+          }
+          if(!(cp[0] == cp[1] && cp[0] == "@")) arr = arr.Reverse().ToArray();
+          stk.Push(Gen(arr[1] > arr[0],"boolean"));
+        }else if(rp.StartsWith("<= ")){
+          string[] cp = rp.Ccut("<=");
+          if(cp.Length != 2) Error(i,aline,"Arguments must be 2:");
+          decimal[] arr = {0,0};
+          Hashtable s;
+          if(cp[0] == "@"){
+            stk.Underflow(1,i,aline);
+            s = (Hashtable)stk.Pop();
+            if(s["type"].ToString() != "decimal") Error(i,aline,"Cannot compare not decimal(s):");
+            arr[0] = decimal.Parse(s["data"].ToString());
+          }else if(Check(cp[0],typeof(decimal))){
+            arr[0] = decimal.Parse(cp[0]);
+          }else{
+            Error(i,aline,"Unknown format:");
+          }
+          if(cp[1] == "@"){
+            stk.Underflow(1,i,aline);
+            s = (Hashtable)stk.Pop();
+            if(s["type"].ToString() != "decimal") Error(i,aline,"Cannot compare not decimal(s):");
+            arr[1] = decimal.Parse(s["data"].ToString());
+          }else if(Check(cp[1],typeof(decimal))){
+            arr[1] = decimal.Parse(cp[1]);
+          }else{
+            Error(i,aline,"Unknown format:");
+          }
+          if(!(cp[0] == cp[1] && cp[0] == "@")) arr = arr.Reverse().ToArray();
+          stk.Push(Gen(arr[1] <= arr[0],"boolean"));
+        }else if(rp.StartsWith(">= ")){
+          string[] cp = rp.Ccut(">=");
+          if(cp.Length != 2) Error(i,aline,"Arguments must be 2:");
+          decimal[] arr = {0,0};
+          Hashtable s;
+          if(cp[0] == "@"){
+            stk.Underflow(1,i,aline);
+            s = (Hashtable)stk.Pop();
+            if(s["type"].ToString() != "decimal") Error(i,aline,"Cannot compare not decimal(s):");
+            arr[0] = decimal.Parse(s["data"].ToString());
+          }else if(Check(cp[0],typeof(decimal))){
+            arr[0] = decimal.Parse(cp[0]);
+          }else{
+            Error(i,aline,"Unknown format:");
+          }
+          if(cp[1] == "@"){
+            stk.Underflow(1,i,aline);
+            s = (Hashtable)stk.Pop();
+            if(s["type"].ToString() != "decimal") Error(i,aline,"Cannot compare not decimal(s):");
+            arr[1] = decimal.Parse(s["data"].ToString());
+          }else if(Check(cp[1],typeof(decimal))){
+            arr[1] = decimal.Parse(cp[1]);
+          }else{
+            Error(i,aline,"Unknown format:");
+          }
+          if(!(cp[0] == cp[1] && cp[0] == "@")) arr = arr.Reverse().ToArray();
+          stk.Push(Gen(arr[1] >= arr[0],"boolean"));
+        }else if(rp.StartsWith("= ")){
+          string[] cp = rp.Ccut("=");
+          if(cp.Length != 2) Error(i,aline,"Arguments must be 2:");
+          string[] arr = {"",""};
+          Hashtable s;
+          if(cp[0] == "@"){
+            stk.Underflow(1,i,aline);
+            s = (Hashtable)stk.Pop();
+            arr[0] = s["data"].ToString();
+          }else if(Check(cp[0],typeof(decimal))){
+            arr[0] = cp[0];
+          }else{
+            Error(i,aline,"Unknown format:");
+          }
+          if(cp[1] == "@"){
+            stk.Underflow(1,i,aline);
+            s = (Hashtable)stk.Pop();
+            arr[1] = s["data"].ToString();
+          }else if(Check(cp[1],typeof(decimal))){
+            arr[1] = cp[1];
+          }else{
+            Error(i,aline,"Unknown format:");
+          }
+          if(!(cp[0] == cp[1] && cp[0] == "@")) arr = arr.Reverse().ToArray();
+          stk.Push(Gen(arr[1] == arr[0],"boolean"));
+        }else if(rp.StartsWith("== ")){
+          string[] cp = rp.Ccut("==");
+          if(cp.Length != 2) Error(i,aline,"Arguments must be 2:");
+          string[] arr = {"",""};
+          string[] art = {"",""};
+          Hashtable s;
+          if(cp[0] == "@"){
+            stk.Underflow(1,i,aline);
+            s = (Hashtable)stk.Pop();
+            arr[0] = s["data"].ToString();
+            art[0] = s["type"].ToString();
+          }else if(Check(cp[0],typeof(decimal))){
+            arr[0] = cp[0];
+            art[0] = "decimal";
+          }else{
+            Error(i,aline,"Unknown format:");
+          }
+          if(cp[1] == "@"){
+            stk.Underflow(1,i,aline);
+            s = (Hashtable)stk.Pop();
+            arr[1] = s["data"].ToString();
+            art[1] = s["type"].ToString();
+          }else if(Check(cp[1],typeof(decimal))){
+            arr[1] = cp[1];
+            art[1] = "decimal";
+          }else{
+            Error(i,aline,"Unknown format:");
+          }
+          if(!(cp[0] == cp[1] && cp[0] == "@")) arr = arr.Reverse().ToArray();
+          stk.Push(Gen((arr[1] == arr[0] && art[1] == art[0]),"boolean"));
         }else if(rp.StartsWith("mov ")){
           string[] cp = rp.Ccut("mov");
           if(cp.Length != 2) Error(i,aline,"Arguments must be 2:");
@@ -344,6 +513,7 @@ class MainClass {
           }else{
             Error(i,aline,"Unknown format:");
           }
+          if(!(cp[0] == cp[1] && cp[0] == "@")) arr = arr.Reverse().ToArray();
           stk.Push(Gen((arr[1] - arr[0]).ToString(),"decimal"));
           _c = _c.Append("    _s.Push(Gen((_da[1] - _da[0]).ToString(),\"decimal\"));");
         }else if(rp.StartsWith("mul ")){
@@ -406,6 +576,7 @@ class MainClass {
           }else{
             Error(i,aline,"Unknown format:");
           }
+          if(!(cp[0] == cp[1] && cp[0] == "@")) arr = arr.Reverse().ToArray();
           stk.Push(Gen((arr[1] / arr[0]).ToString(),"decimal"));
           _c = _c.Append("    _s.Push(Gen((_da[1] / _da[0]).ToString(),\"decimal\"));");
         }else if(rp.StartsWith("mod ")){

@@ -324,3 +324,18 @@ cond 0
 ; cond @
 ; cond decimal(uint)
 ```
+
+### <, >, <=, >=, =, == (not supporting in transpile mode)
+Compare value
+
+**Note:** `= same content text,same content decimal` returns 1, but `== same content text,same content decimal` returns 0
+```
+operator @,@
+operator @,0
+operator 0,@
+operator 0,0
+; operator @,@
+; operator @,decimal
+; operator decimal,@
+; operator decimal,decimal
+```
