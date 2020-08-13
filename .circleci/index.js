@@ -16,7 +16,7 @@ function fc(i){
       console.log("\r\nError");
       process.exit(1);
     }else{
-      if(i + 1 != val.length) fc(i + 1);
+      if(i + 1 != Object.keys(tmp).length) fc(i + 1);
     }
   });
 }
