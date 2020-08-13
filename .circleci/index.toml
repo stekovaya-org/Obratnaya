@@ -70,31 +70,6 @@ code = """.data:
     ret"""
 output = "1.5\r\n"
 
-[radian]
-name = "radian thing"
-code = """.data:
-    .text pi
-    .text rad
-    .text deg
-    .text  is 
-.main:
-    mov 0,@
-    get @
-    movd @,0
-    mov 0,@
-    div @,180
-    mul 2,@
-    mov 3,@
-    mov 2,@
-    concat 360,@
-    concat @,@
-    concat @,@
-    msg @
-    cr
-    lf
-    ret"""
-output = "360deg is 6.28318530718\r\n"
-
 [apple]
 name = "apple"
 code = """.data:
