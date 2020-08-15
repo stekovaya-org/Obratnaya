@@ -100,6 +100,6 @@ code = """.data:
     add @,1
     movd @,0
     mov 0,@
-    < @,10
+    <= @,10
     cond 4"""
-output = "0\r\n1\r\n2\r\n3\r\n4\r\n5\r\n6\r\n7\r\n8\r\n9\r\n"
+output = "0\r\n1\r\n2\r\n3\r\n4\r\n5\r\n6\r\n7\r\n8\r\n9\r\n10\r\n"
