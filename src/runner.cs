@@ -205,8 +205,11 @@ class MainClass {
             arr = arr.Reverse().ToArray();
             tar = tar.Reverse().ToArray();
           }
-          if(varh.ContainsKey(arr[0])) Error(i,aline,"Cannot redefine variable:");
-          varh.Add(arr[0],Gen(arr[1],tar[1]));
+          if(varh.ContainsKey(arr[0])){
+            varh[arr[0]] = Gen(arr[1],tar[1]);
+          }else{
+            varh.Add(arr[0],Gen(arr[1],tar[1]));
+          }
         }else if(rp.StartsWith("< ")){
           string[] cp = rp.Ccut("<");
           if(cp.Length != 2) Error(i,aline,"Arguments must be 2:");
@@ -820,7 +823,8 @@ class MainClass {
           }else{
             Error(i,aline,"Unknown format:");
           }
-          stk.Push(Gen(arr[1] + arr[0],"text"));
+          if(cp[0] == cp[1] && cp[0] == "@") arr = arr.Reverse().ToArray();
+          stk.Push(Gen(arr[0] + arr[1],"text"));
           _c = _c.Append("    _s.Push(Gen(_sa[1] + _sa[0],\"text\"));");
         }else if(rp.StartsWith("emit ")){
           string[] cp = rp.Ccut("emit");
