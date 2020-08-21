@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using System.IO;
+using System.Text.RegularExpressions;
 using static Data;
 using static Obratnaya;
 
@@ -8,6 +9,11 @@ class MainClass {
   public static void Center(string ascii){
     var spcs = new string[(int)Math.Abs(Math.Floor((decimal)((Console.WindowWidth - ascii.Replace("\r","").Split(new char[]{'\n'}).Select(x=>x.Length).ToArray().Max()) / 2)))];
     Console.WriteLine(string.Join("\r\n",ascii.Replace("\r","").Split(new char[]{'\n'}).Select(x=>string.Join(" ",spcs) + x).ToArray()));
+  }
+  public static void Center(string ascii,int spaces){
+    string spcs = "";
+    for(int cs = 0; cs < spaces; cs++) spcs+=" ";
+    Center(string.Join(spcs,ascii.ToCharArray()));
   }
   public static void Main (string[] args) {
     if(args.Length == 0){

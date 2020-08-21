@@ -2,10 +2,12 @@ using System;
 
 public class Data {
   public class Version {
+    public static readonly string Prefix = "";
+    public static readonly string Suffix = "a";
     public static readonly string Major = "1";
     public static readonly string Minor = "0";
     public static readonly string Patch = "0";
-    public static readonly string FullVersion = Major + "." + Minor + "." + Patch;
+    public static readonly string FullVersion = Prefix + Major + "." + Minor + "." + Patch + Suffix;
   }
   public class License {
     public static readonly string FullName = "Creative Commons Attribution-NoDerivatives 4.0 International";

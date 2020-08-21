@@ -1,7 +1,9 @@
 ![](https://storage.googleapis.com/replit/images/1596342110450_7674509b2f36a76d1c139806e2b0cf08.jpeg)
 # Obratnaya [oʊbɹɑtnɑjɑ]
 
-*You must be install .NET or mono*
+***You must be install .NET or mono***
+
+***Transpiler is failing, dont use please***
 
 ## The Section
 Define data / main section
@@ -290,4 +292,50 @@ Prints line feed (U+000A)
 ```
 lf
 ; lf
+```
+
+### define (not supporting in transpile mode)
+Define variable
+```
+define @,@
+define @,0
+define 0,@
+define 0,0
+; define @,@
+; define @,decimal
+; define decimal,@
+; define decimal,decimal
+```
+
+### get (not supporting in transpile mode)
+Get value from variable
+```
+get @
+get 0
+; get @
+; get decimal
+```
+
+### cond (not supporting in transpile mode)
+If the boolean value at the top of the stack is 1 then jumps to line
+```
+cond @
+cond 0
+; cond @
+; cond decimal(uint)
+```
+
+### <, >, <=, >=, =, == (not supporting in transpile mode)
+Compare value
+
+**Note:** `= same content text,same content decimal` returns 1, but `== same content text,same content decimal` returns 0
+```
+operator @,@
+operator @,0
+operator 0,@
+operator 0,0
+; operator @,@
+; operator @,decimal
+; operator decimal,@
+; operator decimal,decimal
 ```
