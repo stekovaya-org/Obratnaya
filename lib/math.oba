@@ -43,3 +43,19 @@ _sign:
     add 3,@
     jmp @
     mov 0,@
+_pi:
+    push pi
+    get @
+_e:
+    push e
+    get @
+_sqrt2:
+    push sqrt2
+    define @,1.41421356237
+    push sqrt2
+    get @
+_zeta3:
+    push zeta3
+    define @,1.20205690315
+    push zeta3
+    get @
