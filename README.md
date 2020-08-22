@@ -14,6 +14,9 @@ Define data / main section
     .decimal 3.14159265
     .boolean 1
     .empty
+    ; comment
+.name:
+    ; commands...
 .main:
     mov 0,@
     ; Get value from data section and put to stack
@@ -359,4 +362,11 @@ pow 0,0
 ; pow @,decimal
 ; pow decimal,@
 ; pow decimal,decimal
+```
+
+### call (not supporting in transpile mode)
+Call section
+```
+call @
+; call @
 ```

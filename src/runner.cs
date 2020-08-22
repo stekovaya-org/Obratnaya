@@ -63,6 +63,7 @@ public class Obratnaya {
   }
   public static void Run(string code){
     var dstk = new System.Collections.Generic.List<Hashtable>();
+    var secl = new System.Collections.Generic.Dictionary<string,int[]>();
     var varh = new Hashtable{
       ["pi"] = Gen(Math.PI.ToString(),"decimal"),
       ["e"] = Gen(Math.E.ToString(),"decimal"),
@@ -82,6 +83,8 @@ public class Obratnaya {
     TypeBuilder tDynamicClass = tModule.DefineType("aClass", TypeAttributes.Public);
     MethodBuilder tMainMethod = tDynamicClass.DefineMethod("Main", MethodAttributes.Public | MethodAttributes.Static, typeof(void), new Type[] { typeof(string[]) });
     ILGenerator IL = tMainMethod.GetILGenerator();
+    bool rb = false;
+    string cs = "";
     string _c = @"using System;
 using System.Collections;
 
@@ -109,9 +112,37 @@ class MainClass {
       varh["utc_1"] = Gen(DateTime.UtcNow.ToUnixTimeMilliseconds(),"decimal");
       string aline = all[i];
       string[] line = aline.Split(" ");
-      if(sec == "data" && line[0] != ".main:"){
+      if(rb && i == secl[cs][1] + 1){
+        i = secl[cs][2];
+        sec = "main";
+        rb = false;
+        continue;
+      }
+      if(line[0] == ".main:"){
+        sec = "main";
+        continue;
+      }else if(line[0] == ".data:"){
+        sec = "data";
+        string ln;
+        if(line.Length <= 1){
+          ln = "100000";
+        }else{
+          ln = line[1];
+        }
+        if(!Check(ln,typeof(uint))) Error(i,aline,"Data size must be positive integer:");
+        IL.Emit(OpCodes.Ldc_I4,int.Parse(ln));
+        IL.Emit(OpCodes.Newarr,typeof(object));
+        continue;
+      }else if(line[0].StartsWith(".") && line[0].EndsWith(":") && sec != "main"){
+        sec = Regex.Replace(line[0],@"\.([^\.:]+):","$1");
+        secl[sec] = new int[]{i,0,0};
+        continue;
+      }
+      if(sec == "data"){
         string rp = Regex.Replace(aline,"^(?:\t\t|    )([^\n]+)$","$1");
-        if(rp.StartsWith(".text ")){
+        if(rp.StartsWith(";")){
+          continue;
+        }else if(rp.StartsWith(".text ")){
           string rpl = Regex.Replace(Regex.Replace(rp,@"^\.text ([^\n]+)$","$1"),@"\$<([0123456789ABCDEFabcdef]+)>",m=>(Convert.ToChar(Convert.ToInt32(m.Groups[1].ToString(),16)).ToString()).ToString());
           IL.Emit(OpCodes.Ldstr,rpl);
           IL.Emit(OpCodes.Ldc_I4,dstk.Count);
@@ -143,8 +174,7 @@ class MainClass {
         }else{
           Error(i,aline,"Unknown prefix:");
         }
-      }
-      if(sec == "main"){
+      }else if(sec == "main"){
         string rp = Regex.Replace(aline,"^(?:\t\t|    )([^\n]+)$","$1");
         if(rp.StartsWith("/*")) empo = true;
         if(empo && !rp.EndsWith("*/")) continue;
@@ -154,12 +184,29 @@ class MainClass {
         }
         if(rp.StartsWith(";")){
           continue;
+        }else if(rp.StartsWith("call ")){
+          string[] cp = rp.Ccut("call");
+          if(cp.Length != 1) Error(i,aline,"Arguments must be 1:");
+          var dfs = (Hashtable)stk.Pop();
+          if(dfs["type"].ToString() != "text") Error(i,aline,"Cannot call section by not text:");
+          if(cp[0] != "@"){
+            Error(i,aline,"Unknown format:");
+          }
+          if(secl.ContainsKey(dfs["data"].ToString())){
+            secl[dfs["data"].ToString()][2] = i;
+            i = secl[dfs["data"].ToString()][0];
+            rb = true;
+            cs = dfs["data"].ToString();
+            continue;
+          }else{
+            Error(i,aline,"Section not found:");
+          }
         }else if(rp.StartsWith("cond ")){
           string[] cp = rp.Ccut("cond");
           if(cp.Length != 1) Error(i,aline,"Arguments must be 1:");
           stk.Underflow(1,i,aline);
           var dfs = (Hashtable)stk.Pop();
-          if(dfs["type"].ToString() != "boolean") Error(i,aline,"Cannot process not boolean");
+          if(dfs["type"].ToString() != "boolean") Error(i,aline,"Cannot process not boolean:");
           string[] arr = {""};
           if(cp[0] == "@"){
             stk.Underflow(1,i,aline);
@@ -916,21 +963,8 @@ class MainClass {
         }else{
           Error(i,aline,"Unknown command:");
         }
-      }
-      if(line[0] == ".main:"){
-        sec = "main";
-      }
-      if(line[0] == ".data:"){
-        sec = "data";
-        string ln;
-        if(line.Length <= 1){
-          ln = "100000";
-        }else{
-          ln = line[1];
-        }
-        if(!Check(ln,typeof(uint))) Error(i,aline,"Data size must be positive integer:");
-        IL.Emit(OpCodes.Ldc_I4,int.Parse(ln));
-        IL.Emit(OpCodes.Newarr,typeof(object));
+      }else if(sec != ""){
+        if(!rb) secl[sec][1] = i;
       }
       /*IL.Emit(OpCodes.Ret);
       tDynamicClass.CreateType();
