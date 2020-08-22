@@ -339,3 +339,16 @@ operator 0,0
 ; operator decimal,@
 ; operator decimal,decimal
 ```
+
+### pow (not supporting in transpile mode)
+Pow value
+```
+pow @,@
+pow @,0
+pow 0,@
+pow 0,0
+; pow @,@
+; pow @,decimal
+; pow decimal,@
+; pow decimal,decimal
+```

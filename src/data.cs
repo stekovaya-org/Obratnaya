@@ -3,7 +3,7 @@ using System;
 public class Data {
   public class Version {
     public static readonly string Prefix = "";
-    public static readonly string Suffix = "a";
+    public static readonly string Suffix = "b";
     public static readonly string Major = "1";
     public static readonly string Minor = "0";
     public static readonly string Patch = "0";

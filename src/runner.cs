@@ -9,6 +9,13 @@ using System.Reflection;
 using System.Threading;
 
 public static class Extension {
+  public static decimal Pow(this decimal T1,decimal T2){
+    decimal T3 = T1;
+    for(int i = 1; i < T2; i++){
+      T1 = T1 * T3;
+    }
+    return T1;
+  }
   public static string Append(this string str,string srt){
     return str + srt + "\r\n";
   }
@@ -456,6 +463,38 @@ class MainClass {
           }else{
             Error(i,aline,"Unknown format:");
           }
+        }else if(rp.StartsWith("pow ")){
+          string[] cp = rp.Ccut("pow");
+          if(cp.Length != 2) Error(i,aline,"Arguments must be 2:");
+          decimal[] arr = {0,0};
+          Hashtable s;
+          if(cp[0] == "@"){
+            stk.Underflow(1,i,aline);
+            s = (Hashtable)stk.Pop();
+            if(s["type"].ToString() != "decimal") Error(i,aline,"Cannot pow not decimal(s):");
+            arr[0] = decimal.Parse(s["data"].ToString());
+            _c = _c.Append("    _da[0] = Convert.ToDecimal(((Hashtable)_s.Pop())[\"data\"]);");
+          }else if(Check(cp[0],typeof(decimal))){
+            arr[0] = decimal.Parse(cp[0]);
+            _c = _c.Append("    _da[0] = " + cp[0] + ";");
+          }else{
+            Error(i,aline,"Unknown format:");
+          }
+          if(cp[1] == "@"){
+            stk.Underflow(1,i,aline);
+            s = (Hashtable)stk.Pop();
+            if(s["type"].ToString() != "decimal") Error(i,aline,"Cannot pow not decimal(s):");
+            arr[1] = decimal.Parse(s["data"].ToString());
+            _c = _c.Append("    _da[1] = Convert.ToDecimal(((Hashtable)_s.Pop())[\"data\"]);");
+            }else if(Check(cp[1],typeof(decimal))){
+            arr[1] = decimal.Parse(cp[1]);
+            _c = _c.Append("    _da[1] = " + cp[1] + ";");
+          }else{
+            Error(i,aline,"Unknown format:");
+          }
+          if(!(cp[0] == cp[1] && cp[0] == "@")) arr = arr.Reverse().ToArray();
+          stk.Push(Gen(arr[1].Pow(arr[0]).ToString(),"decimal"));
+          //_c = _c.Append("    _s.Push(Gen((_da[0] + _da[1]).ToString(),\"decimal\"));");
         }else if(rp.StartsWith("add ")){
           string[] cp = rp.Ccut("add");
           if(cp.Length != 2) Error(i,aline,"Arguments must be 2:");
