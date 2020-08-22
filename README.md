@@ -296,6 +296,14 @@ lf
 
 ### define (not supporting in transpile mode)
 Define variable
+
+Default variables:
+ - e
+ - pi
+ - local_0 (contains started local time by milliseconds)
+ - local_1 (contains local time by milliseconds)
+ - utc_0 (contains started utc time by milliseconds)
+ - utc_1 (contains utc time by milliseconds)
 ```
 define @,@
 define @,0

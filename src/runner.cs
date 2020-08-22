@@ -9,6 +9,9 @@ using System.Reflection;
 using System.Threading;
 
 public static class Extension {
+  public static string ToUnixTimeMilliseconds(this DateTime dt){
+    return ((DateTimeOffset)dt).ToUnixTimeMilliseconds().ToString();
+  }
   public static decimal Pow(this decimal T1,decimal T2){
     decimal T3 = T1;
     for(int i = 1; i < T2; i++){
@@ -62,7 +65,9 @@ public class Obratnaya {
     var dstk = new System.Collections.Generic.List<Hashtable>();
     var varh = new Hashtable{
       ["pi"] = Gen(Math.PI.ToString(),"decimal"),
-      ["e"] = Gen(Math.E.ToString(),"decimal")
+      ["e"] = Gen(Math.E.ToString(),"decimal"),
+      ["local_0"] = Gen(((DateTimeOffset)DateTime.Now).ToUnixTimeMilliseconds().ToString(),"decimal"),
+      ["utc_0"] = Gen(((DateTimeOffset)DateTime.UtcNow).ToUnixTimeMilliseconds().ToString(),"decimal")
     };
     var stk = new Stack();
     string sec = "";
@@ -100,6 +105,8 @@ class MainClass {
     var print = typeof(Console).GetMethod("WriteLine", new Type[]{ typeof(string) });
     if(Regex.Matches(code,@"/\*").Count != Regex.Matches(code,@"\*/").Count) Error("Unmatched comment bracket:");
     for(int i = 0; i < all.Length; i++){
+      varh["local_1"] = Gen(DateTime.Now.ToUnixTimeMilliseconds(),"decimal");
+      varh["utc_1"] = Gen(DateTime.UtcNow.ToUnixTimeMilliseconds(),"decimal");
       string aline = all[i];
       string[] line = aline.Split(" ");
       if(sec == "data" && line[0] != ".main:"){
