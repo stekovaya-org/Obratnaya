@@ -96,7 +96,8 @@ public class Obratnaya {
     MethodBuilder tMainMethod = tDynamicClass.DefineMethod("Main", MethodAttributes.Public | MethodAttributes.Static, typeof(void), new Type[] { typeof(string[]) });
     ILGenerator IL = tMainMethod.GetILGenerator();
     bool rb = false;
-    string cs = "";
+    var cs = new System.Collections.Generic.List<string>();
+    var ns = new System.Collections.Generic.List<int>();
     string _c = @"using System;
 using System.Collections;
 
@@ -120,15 +121,29 @@ class MainClass {
     var print = typeof(Console).GetMethod("WriteLine", new Type[]{ typeof(string) });
     if(Regex.Matches(code,@"/\*").Count != Regex.Matches(code,@"\*/").Count) Error("Unmatched comment bracket:");
     for(int i = 0; i < all.Length; i++){
+      //Console.WriteLine(i.ToString() + ":" + (cs.Count != 0 ? cs[cs.Count - 1] : ""));
       varh["local_1"] = Gen(DateTime.Now.ToUnixTimeMilliseconds(),"decimal");
       varh["utc_1"] = Gen(DateTime.UtcNow.ToUnixTimeMilliseconds(),"decimal");
       string aline = all[i];
       string[] line = aline.Split(" ");
-      if(rb && i == secl[cs][1] + 1){
-        i = secl[cs][2];
+      if(cs.Count != 0){
+      if(rb && i == secl[cs[cs.Count - 1]][1] + 1){
+        if(cs.Count == 1){
+        //Console.WriteLine(2);
+        i = secl[cs[0]][2];
         sec = "main";
         rb = false;
+        cs.RemoveAt(0);
+        ns.RemoveAt(0);
+        }else{
+        //Console.WriteLine(1);
+        var _bs = cs[cs.Count - 1];
+        cs.RemoveAt(cs.Count - 1);
+        ns.RemoveAt(cs.Count - 1);
+        i = secl[_bs][2];
+        }
         continue;
+      }
       }
       if(line[0] == ".main:"){
         sec = "main";
@@ -208,7 +223,8 @@ class MainClass {
             secl[dfs["data"].ToString()][2] = i;
             i = secl[dfs["data"].ToString()][0];
             rb = true;
-            cs = dfs["data"].ToString();
+            cs.Add(dfs["data"].ToString());
+            ns.Add(i);
             continue;
           }else{
             Error(i,aline,"Section not found:");
