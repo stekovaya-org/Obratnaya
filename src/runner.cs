@@ -32,6 +32,18 @@ public static class Extension {
   }
 }
 public class Obratnaya {
+  public static bool Check(string[] listis,Type a){
+    bool r = true;
+    for(int i = 0; i < listis.Length; i++){
+      try{
+        a.GetMethod("Parse",new Type[]{typeof(string)}).Invoke(null,new object[]{listis[i]});
+      }catch{
+        r = false;
+        break;
+      }
+    }
+    return r;
+  }
   public static bool Check(string str,Type type){
     bool r = true;
     try{
@@ -133,8 +145,8 @@ class MainClass {
         IL.Emit(OpCodes.Ldc_I4,int.Parse(ln));
         IL.Emit(OpCodes.Newarr,typeof(object));
         continue;
-      }else if(line[0].StartsWith(".") && line[0].EndsWith(":") && sec != "main"){
-        sec = Regex.Replace(line[0],@"\.([^\.:]+):","$1");
+      }else if(line[0].StartsWith("_") && line[0].EndsWith(":") && sec != "main"){
+        sec = Regex.Replace(line[0],@"_([^:]+):","$1");
         secl[sec] = new int[]{i,0,0};
         continue;
       }
@@ -941,22 +953,27 @@ class MainClass {
         }else if(rp == "nop" || rp.StartsWith("nop ")){
         }else if(rp.StartsWith("push ")){
           string[] cp = rp.Ccut("push");
-          if(cp.Length != 1) Error(i,aline,"Arguments must be 1:");
+          if(cp.Length == 0) Error(i,aline,"Arguments must be 1≦:");
+          if(cp.Length != 1){
+            for(int ia = 1; ia < cp.Length; ia++){
+              cp[0]+="," + cp[ia];
+            }
+          }
           Hashtable sd = Gen("","");
           if(cp[0] == "@"){
             stk.Underflow(1,i,aline);
             sd = (Hashtable)stk.Pop();
-            sd["type"] = "undefined";
+            sd["type"] = "text";
             sd["data"] = sd["data"].ToString();
             _c = _c.Append("    _sa[0] = (string)(((Hashtable)_s.Pop())[\"data\"].ToString());");
           }else if(Check(cp[0],typeof(decimal))){
-            sd = Gen(cp[0],"undefined");
+            sd = Gen(cp[0],"text");
             _c = _c.Append("    _sa[0] = \"" + cp[0] + "\";");
           }else{
-            Error(i,aline,"Unknown format:");
+            sd = Gen(cp[0],"text");
           }
           stk.Push(sd);
-          _c = _c.Append("    _s.Push(Gen(_sa[0],\"undefined\"));");
+          _c = _c.Append("    _s.Push(Gen(_sa[0],\"text\"));");
         }else if(rp == "type"){
           stk.Push(Gen(((Hashtable)stk.Pop())["type"].ToString(),"text"));
           _c = _c.Append("    _s.Push(Gen(((Hashtable)_s.Pop())[\"type\"].ToString(),\"text\"));");

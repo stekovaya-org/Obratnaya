@@ -15,7 +15,7 @@ Define data / main section
     .boolean 1
     .empty
     ; comment
-.name:
+_name:
     ; commands...
 .main:
     mov 0,@
@@ -270,10 +270,12 @@ nop 0
 ```
 
 ### push
-Push value to the stack by type `undefined`
+Push value to the stack by type `text`
 ```
 push @
+push 0
 ; push @
+; push any types[, any types[, any types[, ...]]]
 ```
 
 ### type
