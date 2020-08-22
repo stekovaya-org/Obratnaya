@@ -120,10 +120,12 @@ class MainClass {
 ";
     var print = typeof(Console).GetMethod("WriteLine", new Type[]{ typeof(string) });
     if(Regex.Matches(code,@"/\*").Count != Regex.Matches(code,@"\*/").Count) Error("Unmatched comment bracket:");
+    loads:
     for(int i = 0; i < all.Length; i++){
       //Console.WriteLine(i.ToString() + ":" + (cs.Count != 0 ? cs[cs.Count - 1] : ""));
       varh["local_1"] = Gen(DateTime.Now.ToUnixTimeMilliseconds(),"decimal");
       varh["utc_1"] = Gen(DateTime.UtcNow.ToUnixTimeMilliseconds(),"decimal");
+      varh["line"] = Gen((i + 1).ToString(),"decimal");
       string aline = all[i];
       string[] line = aline.Split(" ");
       if(cs.Count != 0){
@@ -163,6 +165,23 @@ class MainClass {
       }else if(line[0].StartsWith("_") && line[0].EndsWith(":") && sec != "main"){
         sec = Regex.Replace(line[0],@"_([^:]+):","$1");
         secl[sec] = new int[]{i,0,0};
+        continue;
+      }else if(line[0] == "#include" && line.Length >= 2){
+        string path = "";
+        for(int ia = 1; ia < line.Length; ia++){
+          path+=(path == "" ? "" : " ") + line[ia];
+        }
+        var oldpath = path;
+        var sep = Path.DirectorySeparatorChar.ToString();
+        if(path.StartsWith("<") && path.EndsWith(">")) path = System.AppDomain.CurrentDomain.BaseDirectory + "lib" + sep + Regex.Replace(path,"<([^<>]+)>","$1");
+        if(File.Exists(path)){
+          all = (File.ReadAllText(path) + "\n" + Regex.Replace(code.Replace("\r",""),@"#include " + oldpath + "\n","")).Split(new char[]{'\n'});
+          code = File.ReadAllText(path) + "\n" + Regex.Replace(code.Replace("\r",""),@"#include " + oldpath + "\n","");
+          goto loads;
+        }else{
+          Error(i,aline,"File not found:");
+        }
+      }else if(line[0].StartsWith(";")){
         continue;
       }
       if(sec == "data"){
@@ -238,9 +257,9 @@ class MainClass {
           string[] arr = {""};
           if(cp[0] == "@"){
             stk.Underflow(1,i,aline);
-            dfs = (Hashtable)stk.Pop();
-            if(!Check(dfs["data"].ToString(),typeof(uint))) Error(i,aline,"Cannot jump to line by not positive integer:");
-            arr[0] = dfs["data"].ToString();
+            var  df = (Hashtable)stk.Pop();
+            if(!Check(df["data"].ToString(),typeof(uint))) Error(i,aline,"Cannot jump to line by not positive integer:");
+            arr[0] = df["data"].ToString();
           }else if(Check(cp[0],typeof(uint))){
             arr[0] = cp[0];
           }else{
@@ -248,6 +267,7 @@ class MainClass {
           }
           if(dfs["data"].ToString() == "1"){
             i = int.Parse(arr[0]) - 2;
+            continue;
           }
         }else if(rp.StartsWith("get ")){
           string[] cp = rp.Ccut("get");
@@ -258,6 +278,8 @@ class MainClass {
             arr[0] = ((Hashtable)stk.Pop())["data"].ToString();
           }else if(Check(cp[0],typeof(decimal))){
             arr[0] = cp[0];
+          }else if(cp[0] == "%line"){
+            arr[0] = "line";
           }else{
             Error(i,aline,"Unknown format:");
           }
@@ -902,7 +924,7 @@ class MainClass {
             stk.Underflow(1,i,aline);
             s = (Hashtable)stk.Pop();
             if(s["type"].ToString() != "decimal") Error(i,aline,"Cannot jump by not positive integer:");
-            if(!Check(cp[0],typeof(uint))) Error(i,aline,"Cannot jump by not positive integer:");
+            if(!Check(s["data"].ToString(),typeof(uint))) Error(i,aline,"Cannot jump by not positive integer:");
             i = int.Parse(s["data"].ToString()) - 2;
           }else if(Check(cp[0],typeof(uint))){
             i = int.Parse(cp[0]) - 2;

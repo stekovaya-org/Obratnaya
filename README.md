@@ -8,6 +8,9 @@
 ## The Section
 Define data / main section
 ```
+; comment
+#include <math.oba>
+#include custom.oba
 .data:
     .text Text data
     .text unicode$<FFFD>
