@@ -10,6 +10,8 @@ Define data / main section
 ```
 ; comment
 #include <math.oba>
+#include <util/exitcodes.oba>
+#include <util/>
 #include custom.oba
 .data:
     .text Text data

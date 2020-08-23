@@ -1,0 +1,27 @@
+_error:
+    movt @,0
+    emit 27
+    push [1m:INTERNAL:
+    concat @,@
+    emit 27
+    push [m
+    concat @,@
+    concat @,@
+    emit 27
+    push [31m 
+    concat @,@
+    mov 0,@
+    concat @,@
+    concat @,@
+    emit 27
+    push [m
+    concat @,@
+    concat @,@
+    msg @
+    cr
+    lf
+    push     INTERNAL
+    msg @
+    cr
+    lf
+    ret 1

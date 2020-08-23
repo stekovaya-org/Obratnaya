@@ -1,0 +1,28 @@
+_SUCCESS:
+    add 0,0
+_ERROR:
+    add 1,0
+_INCORRECT_USAGE:
+    add 2,0
+_NO_PERMS:
+    add 126,0
+_COMMAND_NOT_FOUND:
+    add 127,0
+_ILLEGAL_EXIT_CODE:
+    add 128,0
+_MAX:
+    add 255,0
+_E0:
+    push SUCCESS
+_E1:
+    push ERROR
+_E2:
+    push INCORRECT_USAGE
+_E126:
+    push NO_PERMS
+_E127:
+    push COMMAND_NOT_FOUND
+_E128:
+    push ILLEGAL_EXIT_CODE
+_E255:
+    push MAX

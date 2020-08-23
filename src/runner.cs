@@ -34,7 +34,9 @@ public static class Extension {
 public class Obratnaya {
   public static int slft = 0;
   public static string[] libraries = new string[]{
-    "math.oba"
+    "math.oba",
+    "util/exitcodes.oba",
+    "util/error.oba"
   };
   public static bool Check(string[] listis,Type a){
     bool r = true;
@@ -232,6 +234,12 @@ class MainClass {
         }
       }else if(sec == "main"){
         string rp = Regex.Replace(aline,"^(?:\t\t|    )([^\n]+)$","$1");
+        if(string.IsNullOrWhiteSpace(aline)){
+          continue;
+        }
+        if(!aline.StartsWith("\t\t") && !aline.StartsWith("    ")){
+          Error(i,aline,"Illegal indent detected");
+        }
         if(rp.StartsWith("/*")) empo = true;
         if(empo && !rp.EndsWith("*/")) continue;
         if(rp.EndsWith("*/")){
