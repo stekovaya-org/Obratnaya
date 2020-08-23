@@ -11,7 +11,7 @@ Define data / main section
 ; comment
 #include <math.oba>
 #include <util/exitcodes.oba>
-#include <util/>
+#include <util/error.oba>
 #include custom.oba
 .data:
     .text Text data
