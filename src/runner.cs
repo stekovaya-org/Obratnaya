@@ -32,6 +32,10 @@ public static class Extension {
   }
 }
 public class Obratnaya {
+  public static int slft = 0;
+  public static string[] libraries = new string[]{
+    "math.oba"
+  };
   public static bool Check(string[] listis,Type a){
     bool r = true;
     for(int i = 0; i < listis.Length; i++){
@@ -66,14 +70,19 @@ public class Obratnaya {
     };
   }
   public static void Error(int i,string line,string content){
-    Console.Error.WriteLine("\x1b[1m:" + (i + 1) + ": \x1b[m\x1b[31m" + content + "\x1b[m\r\n" + line);
+    Console.Error.WriteLine("\x1b[1m:" + (i + 1 - slft) + ": \x1b[m\x1b[31m" + (content.EndsWith(":") ? content : content + ":") + "\x1b[m\r\n" + line);
     Environment.Exit(1);
   }
   public static void Error(string content){
-    Console.Error.WriteLine("\x1b[1m:FATAL: \x1b[m\x1b[31m" + content + "\x1b[m");
+    Console.Error.WriteLine("\x1b[1m:FATAL: \x1b[m\x1b[31m" + (content.EndsWith(":") ? content : content + ":") + "\x1b[m");
     Environment.Exit(1);
   }
   public static void Run(string code){
+    for(int lcn = 0; lcn < libraries.Length; lcn++){
+      if(!File.Exists(AppDomain.CurrentDomain.BaseDirectory + "lib" + Path.DirectorySeparatorChar.ToString() + libraries[lcn].Replace("\\",Path.DirectorySeparatorChar.ToString()))){
+        Error("Missing library: [" + libraries[lcn] + "]");
+      }
+    }
     var dstk = new System.Collections.Generic.List<Hashtable>();
     var secl = new System.Collections.Generic.Dictionary<string,int[]>();
     var varh = new Hashtable{
@@ -173,8 +182,9 @@ class MainClass {
         }
         var oldpath = path;
         var sep = Path.DirectorySeparatorChar.ToString();
-        if(path.StartsWith("<") && path.EndsWith(">")) path = System.AppDomain.CurrentDomain.BaseDirectory + "lib" + sep + Regex.Replace(path,"<([^<>]+)>","$1");
+        if(path.StartsWith("<") && path.EndsWith(">")) path = AppDomain.CurrentDomain.BaseDirectory + "lib" + sep + Regex.Replace(path,"<([^<>]+)>","$1");
         if(File.Exists(path)){
+          slft += File.ReadAllText(path).Split(new char[]{'\n'}).Length - 1;
           all = (File.ReadAllText(path) + "\n" + Regex.Replace(code.Replace("\r",""),@"#include " + oldpath + "\n","")).Split(new char[]{'\n'});
           code = File.ReadAllText(path) + "\n" + Regex.Replace(code.Replace("\r",""),@"#include " + oldpath + "\n","");
           goto loads;
@@ -890,9 +900,9 @@ class MainClass {
           _c = _c.Append("    _d.RemoveAt((int)_da[0]);");
         }else if(rp == "ret"){
           _c = _c.Append("    Environment.Exit(0);");
-          if(File.Exists("out.cs")) File.Delete("out.cs");
-          File.WriteAllText("out.cs","");
-          File.WriteAllText("out.cs",_c + "  }\r\n}");
+          //if(File.Exists("out.cs")) File.Delete("out.cs");
+          //File.WriteAllText("out.cs","");
+          //File.WriteAllText("out.cs",_c + "  }\r\n}");
           Environment.Exit(0);
         }else if(rp.StartsWith("ret ")){
           string[] cp = rp.Ccut("ret");
@@ -912,9 +922,9 @@ class MainClass {
             Error(i,aline,"Unknown format:");
           }
           _c = _c.Append("    Environment.Exit(int.Parse(_sa[0]));");
-          if(File.Exists("out.cs")) File.Delete("out.cs");
-          File.WriteAllText("out.cs","");
-          File.WriteAllText("out.cs",_c + "  }\r\n}");
+          //if(File.Exists("out.cs")) File.Delete("out.cs");
+          //File.WriteAllText("out.cs","");
+          //File.WriteAllText("out.cs",_c + "  }\r\n}");
           Environment.Exit(intv);
         }else if(rp.StartsWith("jmp ")){
           string[] cp = rp.Ccut("jmp");
@@ -1025,9 +1035,9 @@ class MainClass {
       tDynamicClass.CreateType();
       tAssembly.SetEntryPoint(tMainMethod);
       tAssembly.Save("a.exe",PortableExecutableKinds.ILOnly,ImageFileMachine.ARM);*/
-      if(File.Exists("out.cs")) File.Delete("out.cs");
-      File.WriteAllText("out.cs","");
-      File.WriteAllText("out.cs",_c + "  }\r\n}");
+      //if(File.Exists("out.cs")) File.Delete("out.cs");
+      //File.WriteAllText("out.cs","");
+      //File.WriteAllText("out.cs",_c + "  }\r\n}");
     }
   }
 }
