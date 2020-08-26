@@ -10,6 +10,7 @@ Define data / main section
 ```
 ; comment
 #include <math.oba>
+#include <stdout.oba>
 #include <util/exitcodes.oba>
 #include <util/error.oba>
 #include custom.oba

@@ -1,0 +1,9 @@
+; Stdout library
+_msgln:
+    msg @
+    cr
+    lf
+_cr:
+    emit 10
+_lf:
+    emit 13

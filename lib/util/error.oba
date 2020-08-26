@@ -1,3 +1,4 @@
+; Error library
 _error:
     movt @,0
     emit 27
@@ -20,7 +21,7 @@ _error:
     msg @
     cr
     lf
-    push     INTERNAL
+    push     <INTERNAL>
     msg @
     cr
     lf

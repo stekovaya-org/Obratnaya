@@ -35,6 +35,7 @@ public class Obratnaya {
   public static int slft = 0;
   public static string[] libraries = new string[]{
     "math.oba",
+    "stdout.oba",
     "util/exitcodes.oba",
     "util/error.oba"
   };
@@ -177,6 +178,22 @@ class MainClass {
         sec = Regex.Replace(line[0],@"_([^:]+):","$1");
         secl[sec] = new int[]{i,0,0};
         continue;
+      }else if(line[0] == "#library" && line.Length >= 2){
+        string path = "";
+        for(int ia = 1; ia < line.Length; ia++){
+          path+=(path == "" ? "" : " ") + line[ia];
+        }
+        var oldpath = path;
+        var sep = Path.DirectorySeparatorChar.ToString();
+        if(path.StartsWith("<") && path.EndsWith(">")) path = AppDomain.CurrentDomain.BaseDirectory + "lib" + sep + Regex.Replace(path,"<([^<>]+)>","$1");
+        if(File.Exists(path)){
+          slft += File.ReadAllText(path).Split(new char[]{'\n'}).Length - 1;
+          all = (File.ReadAllText(path) + "\n" + Regex.Replace(code.Replace("\r",""),@"#library " + oldpath + "\n","")).Split(new char[]{'\n'});
+          code = File.ReadAllText(path) + "\n" + Regex.Replace(code.Replace("\r",""),@"#library " + oldpath + "\n","");
+          goto loads;
+        }else{
+          Error(i,aline,"File not found:");
+        }
       }else if(line[0] == "#include" && line.Length >= 2){
         string path = "";
         for(int ia = 1; ia < line.Length; ia++){
