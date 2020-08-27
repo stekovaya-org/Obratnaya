@@ -378,3 +378,17 @@ Call section
 call @
 ; call @
 ```
+
+### 2020. August 27th.
+Transpiler was abolished.
+
+We write document without write `(not supporting in transpile mode)`.
+
+### len
+Get length
+```
+len @
+len 0
+; len @
+; len decimal
+```

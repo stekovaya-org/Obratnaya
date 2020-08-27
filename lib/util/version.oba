@@ -1,0 +1,19 @@
+; Version library
+_full_ver:
+    push version
+    get @
+_major_ver:
+    push version_major
+    get @
+_minor_ver:
+    push version_minor
+    get @
+_patch_ver:
+    push version_patch
+    get @
+_prefix_ver:
+    push version_prefix
+    get @
+_suffix_ver:
+    push version_suffix
+    get @

@@ -41,6 +41,14 @@ class MainClass {
         }
       }
     }else{
+      if(args[0] == "--version"){
+        Console.WriteLine(Data.Version.FullVersion);
+        Environment.Exit(0);
+      }
+      if(args[0] == "--license"){
+        Console.WriteLine(Data.License.LegalCode);
+        Environment.Exit(0);
+      }
       if(File.Exists(args[0])){
         Obratnaya.Run(File.ReadAllText(args[0]));
       }else{

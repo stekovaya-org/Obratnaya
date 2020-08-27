@@ -20,6 +20,7 @@ public static class Extension {
     return T1;
   }
   public static string Append(this string str,string srt){
+    //str = str + srt + "\r\n";
     return str + srt + "\r\n";
   }
   public static string[] Ccut(this string str,string com){
@@ -33,12 +34,7 @@ public static class Extension {
 }
 public class Obratnaya {
   public static int slft = 0;
-  public static string[] libraries = new string[]{
-    "math.oba",
-    "stdout.oba",
-    "util/exitcodes.oba",
-    "util/error.oba"
-  };
+  public static string[] libraries = Data.Library.Libraries;
   public static bool Check(string[] listis,Type a){
     bool r = true;
     for(int i = 0; i < listis.Length; i++){
@@ -59,6 +55,12 @@ public class Obratnaya {
       r = false;
     }
     return r;
+  }
+  public static Hashtable Gen(string data){
+    return Gen(data,"text");
+  }
+  public static Hashtable Gen(bool data){
+    return Gen(data,"boolean");
   }
   public static Hashtable Gen(string data,string type){
     return new Hashtable{
@@ -83,7 +85,7 @@ public class Obratnaya {
   public static void Run(string code){
     for(int lcn = 0; lcn < libraries.Length; lcn++){
       if(!File.Exists(AppDomain.CurrentDomain.BaseDirectory + "lib" + Path.DirectorySeparatorChar.ToString() + libraries[lcn].Replace("\\",Path.DirectorySeparatorChar.ToString()))){
-        Error("Missing library: [" + libraries[lcn] + "]");
+        Error("Missing library: [" + libraries[lcn] + "], URL: [\x1b[m https://github.com/stekovaya-org/Obratnaya/blob/master/lib/" + libraries[lcn] + "/ \x1b[31m]");
       }
     }
     var dstk = new System.Collections.Generic.List<Hashtable>();
@@ -91,6 +93,14 @@ public class Obratnaya {
     var varh = new Hashtable{
       ["pi"] = Gen(Math.PI.ToString(),"decimal"),
       ["e"] = Gen(Math.E.ToString(),"decimal"),
+      ["version"] = Gen(Data.Version.FullVersion,"text"),
+      ["version_major"] = Gen(Data.Version.Major,"decimal"),
+      ["version_minor"] = Gen(Data.Version.Minor,"decimal"),
+      ["version_patch"] = Gen(Data.Version.Patch,"decimal"),
+      ["version_prefix"] = Gen(Data.Version.Prefix,"text"),
+      ["version_suffix"] = Gen(Data.Version.Suffix,"text"),
+      ["license"] = Gen(Data.License.LegalCode,"text"),
+      ["license_name"] = Gen(Data.License.Name,"text"),
       ["local_0"] = Gen(((DateTimeOffset)DateTime.Now).ToUnixTimeMilliseconds().ToString(),"decimal"),
       ["utc_0"] = Gen(((DateTimeOffset)DateTime.UtcNow).ToUnixTimeMilliseconds().ToString(),"decimal")
     };
@@ -265,6 +275,19 @@ class MainClass {
         }
         if(rp.StartsWith(";")){
           continue;
+        }else if(rp.StartsWith("len ")){
+          string[] cp = rp.Ccut("len");
+          if(cp.Length != 1) Error(i,aline,"Arguments must be 1:");
+          string[] arr = {""};
+          if(cp[0] == "@"){
+            stk.Underflow(1,i,aline);
+            arr[0] = ((Hashtable)stk.Pop())["data"].ToString();
+          }else if(Check(cp[0],typeof(decimal))){
+            arr[0] = cp[0];
+          }else{
+            Error(i,aline,"Unknown format:");
+          }
+          stk.Push(Gen(arr[0].Length.ToString(),"decimal"));
         }else if(rp.StartsWith("call ")){
           string[] cp = rp.Ccut("call");
           if(cp.Length != 1) Error(i,aline,"Arguments must be 1:");

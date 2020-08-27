@@ -9,6 +9,15 @@ public class Data {
     public static readonly string Patch = "0";
     public static readonly string FullVersion = Prefix + Major + "." + Minor + "." + Patch + Suffix;
   }
+  public class Library {
+    public static readonly string[] Libraries = new string[]{
+      "math.oba",
+      "stdout.oba",
+      "util/exitcodes.oba",
+      "util/error.oba",
+      "util/version.oba"
+    };
+  }
   public class License {
     public static readonly string FullName = "Creative Commons Attribution-NoDerivatives 4.0 International";
     public static readonly string Version = "4.0";
