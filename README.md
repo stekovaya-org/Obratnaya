@@ -13,6 +13,7 @@ Define data / main section
 #include <stdout.oba>
 #include <util/exitcodes.oba>
 #include <util/error.oba>
+#include <util/version.oba>
 #include custom.oba
 .data:
     .text Text data
@@ -315,6 +316,7 @@ Default variables:
  - local_1 (contains local time by milliseconds)
  - utc_0 (contains started utc time by milliseconds)
  - utc_1 (contains utc time by milliseconds)
+ - license (contains license legal code)
 ```
 define @,@
 define @,0

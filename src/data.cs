@@ -5,7 +5,7 @@ public class Data {
     public static readonly string Prefix = "";
     public static readonly string Suffix = "a";
     public static readonly string Major = "1";
-    public static readonly string Minor = "1";
+    public static readonly string Minor = "3";
     public static readonly string Patch = "0";
     public static readonly string FullVersion = Prefix + Major + "." + Minor + "." + Patch + Suffix;
   }
