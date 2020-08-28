@@ -33,6 +33,9 @@ public static class Extension {
   }
 }
 public class Obratnaya {
+  public static bool erx = false;
+  public static bool erd = false;
+  public static string erc = "";
   public static int slft = 0;
   public static string[] libraries = Data.Library.Libraries;
   public static bool Check(string[] listis,Type a){
@@ -75,17 +78,27 @@ public class Obratnaya {
     };
   }
   public static void Error(int i,string line,string content){
-    Console.Error.WriteLine("\x1b[1m:" + (i + 1 - slft) + ": \x1b[m\x1b[31m" + (content.EndsWith(":") ? content : content + ":") + "\x1b[m\r\n" + line);
-    Environment.Exit(1);
+    erc = erc == "" ? "\x1b[1m:" + (i + 1 - slft) + ": \x1b[m\x1b[31m" + (content.EndsWith(":") ? content : content + ":") + "\x1b[m\r\n" + line : erc;
+    if(erx) Console.Error.WriteLine(erc);
+    erd = true;
+    if(erx) Environment.Exit(1);
   }
   public static void Error(string content){
-    Console.Error.WriteLine("\x1b[1m:FATAL: \x1b[m\x1b[31m" + (content.EndsWith(":") ? content : content + ":") + "\x1b[m");
-    Environment.Exit(1);
+    erc = erc == "" ? "\x1b[1m:FATAL: \x1b[m\x1b[31m" + (content.EndsWith(":") ? content : content + ":") + "\x1b[m" : erc;
+    if(erx) Console.Error.WriteLine(erc);
+    erd = true;
+    if(erx) Environment.Exit(1);
   }
   public static void Run(string code){
+    Run(code,false);
+  }
+  public static void Run(string code,bool ere){
+    erx = ere;
+    erd = false;
+    slft = 0;
     for(int lcn = 0; lcn < libraries.Length; lcn++){
       if(!File.Exists(AppDomain.CurrentDomain.BaseDirectory + "lib" + Path.DirectorySeparatorChar.ToString() + libraries[lcn].Replace("\\",Path.DirectorySeparatorChar.ToString()))){
-        Error("Missing library: [" + libraries[lcn] + "], URL: [\x1b[m https://github.com/stekovaya-org/Obratnaya/blob/master/lib/" + libraries[lcn] + "/ \x1b[31m]");
+        Error("Missing library: [" + libraries[lcn] + "], URL: [\x1b[m https://github.com/stekovaya-org/Obratnaya/blob/master/lib/" + libraries[lcn] + "/ \x1b[31m]");if(!erx){return;}
       }
     }
     var dstk = new System.Collections.Generic.List<Hashtable>();
@@ -142,7 +155,7 @@ class MainClass {
 ";
     var print = typeof(Console).GetMethod("WriteLine", new Type[]{ typeof(string) });
     if(Regex.Matches(code,@"/\*").Count != Regex.Matches(code,@"\*/").Count) Error("Unmatched comment bracket:");
-    loads:
+    loadsf:
     for(int i = 0; i < all.Length; i++){
       //Console.WriteLine(i.ToString() + ":" + (cs.Count != 0 ? cs[cs.Count - 1] : ""));
       varh["local_1"] = Gen(DateTime.Now.ToUnixTimeMilliseconds(),"decimal");
@@ -200,7 +213,7 @@ class MainClass {
           slft += File.ReadAllText(path).Split(new char[]{'\n'}).Length - 1;
           all = (File.ReadAllText(path) + "\n" + Regex.Replace(code.Replace("\r",""),@"#library " + oldpath + "\n","")).Split(new char[]{'\n'});
           code = File.ReadAllText(path) + "\n" + Regex.Replace(code.Replace("\r",""),@"#library " + oldpath + "\n","");
-          goto loads;
+          goto loadsf;
         }else{
           Error(i,aline,"File not found:");
         }
@@ -216,7 +229,7 @@ class MainClass {
           slft += File.ReadAllText(path).Split(new char[]{'\n'}).Length - 1;
           all = (File.ReadAllText(path) + "\n" + Regex.Replace(code.Replace("\r",""),@"#include " + oldpath + "\n","")).Split(new char[]{'\n'});
           code = File.ReadAllText(path) + "\n" + Regex.Replace(code.Replace("\r",""),@"#include " + oldpath + "\n","");
-          goto loads;
+          goto loadsf;
         }else{
           Error(i,aline,"File not found:");
         }
@@ -315,7 +328,7 @@ class MainClass {
           string[] arr = {""};
           if(cp[0] == "@"){
             stk.Underflow(1,i,aline);
-            var  df = (Hashtable)stk.Pop();
+            var df = (Hashtable)stk.Pop();
             if(!Check(df["data"].ToString(),typeof(uint))) Error(i,aline,"Cannot jump to line by not positive integer:");
             arr[0] = df["data"].ToString();
           }else if(Check(cp[0],typeof(uint))){
@@ -324,7 +337,7 @@ class MainClass {
             Error(i,aline,"Unknown format:");
           }
           if(dfs["data"].ToString() == "1"){
-            i = int.Parse(arr[0]) - 2;
+            i = int.Parse(arr[0]) - 2 + slft;
             continue;
           }
         }else if(rp.StartsWith("get ")){
@@ -983,9 +996,9 @@ class MainClass {
             s = (Hashtable)stk.Pop();
             if(s["type"].ToString() != "decimal") Error(i,aline,"Cannot jump by not positive integer:");
             if(!Check(s["data"].ToString(),typeof(uint))) Error(i,aline,"Cannot jump by not positive integer:");
-            i = int.Parse(s["data"].ToString()) - 2;
+            i = int.Parse(s["data"].ToString()) - 2 + slft;
           }else if(Check(cp[0],typeof(uint))){
-            i = int.Parse(cp[0]) - 2;
+            i = int.Parse(cp[0]) - 2 + slft;
           }else{
             Error(i,aline,"Unknown format:");
           }

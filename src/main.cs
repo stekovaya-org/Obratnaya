@@ -17,6 +17,7 @@ class MainClass {
   }
   public static void Main (string[] args) {
     if(args.Length == 0){
+      string pha = "";
       Center(@"   ____  __               __                         
   / __ \/ /_  _________ _/ /_____  ____ ___  ______ _
  / / / / __ \/ ___/ __ `/ __/ __ \/ __ `/ / / / __ `/
@@ -28,6 +29,7 @@ class MainClass {
       Center("SixBeeps");
       Center("Type .bye to exit");
       Center("Type .license to display license");
+      Center("Type .run to run");
       while(true){
         Console.Write(">>> ");
         string q = Console.ReadLine();
@@ -35,9 +37,15 @@ class MainClass {
           Environment.Exit(0);
         }else if(q == ".license"){
           Console.WriteLine(Data.License.LegalCode);
+        }else if(q == ".run"){
+          Obratnaya.Run(pha);
+          if(erd) Console.WriteLine(erc);
+          pha = "";
         }else{
-          Console.WriteLine("REPL version isnt available now");
+          //Console.WriteLine("REPL version isnt available now");
           //Obratnaya.Run(q);
+          Console.WriteLine("Ready.");
+          pha += q + "\r\n";
         }
       }
     }else{
@@ -50,7 +58,8 @@ class MainClass {
         Environment.Exit(0);
       }
       if(File.Exists(args[0])){
-        Obratnaya.Run(File.ReadAllText(args[0]));
+        Obratnaya.Run(File.ReadAllText(args[0]),true);
+        Environment.Exit(erd ? 1 : 0);
       }else{
         Console.Error.WriteLine("\x1b[1mObratnaya: \x1b[31merror: \x1b[m" + args[0] + ": No such file");
         Console.Error.WriteLine("\x1b[1mObratnaya: \x1b[31mfatal error: \x1b[mno input files");
