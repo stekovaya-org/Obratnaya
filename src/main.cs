@@ -44,7 +44,7 @@ class MainClass {
         }else{
           //Console.WriteLine("REPL version isnt available now");
           //Obratnaya.Run(q);
-          Console.WriteLine("Ready.");
+          //Console.WriteLine("Ready.");
           pha += q + "\r\n";
         }
       }
