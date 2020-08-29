@@ -14,6 +14,7 @@ public static class Extension {
   }
   public static decimal Pow(this decimal T1,decimal T2){
     decimal T3 = T1;
+    if(T2 == 0) return 1;
     for(int i = 1; i < T2; i++){
       T1 = T1 * T3;
     }
