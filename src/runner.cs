@@ -768,7 +768,7 @@ class MainClass {
           _c = _c.Append("    _s.Push(Gen((_da[0] * _da[1]).ToString(),\"decimal\"));");
         }else if(rp.StartsWith("div ")){
           string[] cp = rp.Ccut("div");
-          if(cp.Length != 2) Error(i,aline,"Arguments must be 2:");
+          if(cp.Length != 2 && cp.Length != 3) Error(i,aline,"Arguments must be 2:");
           decimal[] arr = {0,0};
           Hashtable s;
           if(cp[0] == "@"){
@@ -796,7 +796,7 @@ class MainClass {
             Error(i,aline,"Unknown format:");
           }
           if(!(cp[0] == cp[1] && cp[0] == "@")) arr = arr.Reverse().ToArray();
-          stk.Push(Gen((arr[1] / arr[0]).ToString(),"decimal"));
+          stk.Push(Gen((cp.Length == 3 ? (cp[2] == "1" ? Math.Floor(arr[1] / arr[0]) : (arr[1] / arr[0])) : arr[1] / arr[0]).ToString(),"decimal"));
           _c = _c.Append("    _s.Push(Gen((_da[1] / _da[0]).ToString(),\"decimal\"));");
         }else if(rp.StartsWith("mod ")){
           string[] cp = rp.Ccut("mod");
