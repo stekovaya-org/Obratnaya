@@ -337,7 +337,9 @@ class MainClass {
             Error(i,aline,"Unknown format:");
           }
           if(dfs["data"].ToString() == "1"){
-            i = int.Parse(arr[0]) - 2 + slft;
+            i = int.Parse(arr[0]) - 2 + (ns.Count == 0 ? slft : 0);
+            //Console.WriteLine(i + 2);
+            //Console.WriteLine(ns.Count);
             continue;
           }
         }else if(rp.StartsWith("get ")){
@@ -996,9 +998,9 @@ class MainClass {
             s = (Hashtable)stk.Pop();
             if(s["type"].ToString() != "decimal") Error(i,aline,"Cannot jump by not positive integer:");
             if(!Check(s["data"].ToString(),typeof(uint))) Error(i,aline,"Cannot jump by not positive integer:");
-            i = int.Parse(s["data"].ToString()) - 2 + slft;
+            i = int.Parse(s["data"].ToString()) - 2 + (ns.Count == 0 ? slft : 0);
           }else if(Check(cp[0],typeof(uint))){
-            i = int.Parse(cp[0]) - 2 + slft;
+            i = int.Parse(cp[0]) - 2 + (ns.Count == 0 ? slft : 0);
           }else{
             Error(i,aline,"Unknown format:");
           }
