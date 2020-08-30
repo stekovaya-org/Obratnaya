@@ -7,9 +7,9 @@
     
      steps:
        - checkout
-       #- run:
-       #    name: Update
-       #    command: sudo apt-get update
+       - run:
+           name: Update
+           command: sudo apt-get update
        #- run:
        #    name: Install some packages
        #    command: sudo apt-get install dirmngr gnupg apt-transport-https ca-certificates
