@@ -5,7 +5,7 @@ function fc(i){
   var val = Object.keys(tmp)[i];
   var result = "";
   fs.writeFileSync("main.oba",tmp[val].code);
-  var sp = require("child_process").spawn("mono",["obrya.exe","main.oba"]);
+  var sp = require("child_process").spawn("./obrya",["main.oba"]);
   console.log("-----" + tmp[val].name);
   sp.stdout.on("data",e=>{
     process.stdout.write(e);
