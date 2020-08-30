@@ -3,7 +3,7 @@
  jobs:
    build:
      docker:
-       - image: docker:18.09
+       - image: circleci/node:9.9.0
          user: root
      steps:
        - checkout
