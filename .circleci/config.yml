@@ -4,6 +4,7 @@
    build:
      docker:
        - image: docker:18.09
+         command: /bin/bash
      steps:
        - checkout
        - run:
