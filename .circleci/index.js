@@ -7,10 +7,12 @@ function fc(i){
   fs.writeFileSync("main.oba",tmp[val].code);
   var sp = require("child_process").spawn("./obrya",["main.oba"]);
   console.log("-----" + tmp[val].name);
-  sp.stdout.on("data",e=>{
+  var f = e=>{
     process.stdout.write(e);
     result+=e + "";
-  });
+  };
+  sp.stdout.on("data",f);
+  sp.stderr.on("data",f);
   sp.on("close",exitc=>{
     if(exitc != 0 || result !== tmp[val].output){
       console.log("\r\nError");
