@@ -1,39 +1,36 @@
- version: 2.1
+version: 2.1
 
  jobs:
    build:
-     docker:
-       - image: circleci/node:9.9.0
-         user: root
+     machine:
+       image: ubuntu-1604:201903-01
+    
      steps:
        - checkout
        - run:
            name: Update
-           command: apt-get update
-       #- run:
-       #    name: Install some packages
-       #    command: sudo apt-get install dirmngr gnupg apt-transport-https ca-certificates
-       #- run:
-       #    name: Get thing from key
-       #    command: sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF
-       #- run:
-       #    name: Select stable-xenial
-       #    command: echo "deb https://download.mono-project.com/repo/ubuntu stable-xenial main" | sudo tee /etc/apt/sources.list.d/mono-official-stable.list
-       #- run:
-       #    name: Update again
-       #    command: sudo apt-get update
-       #- run:
-       #    name: Install mono-complete
-       #    command: sudo apt-get install -y mono-complete
+           command: sudo apt-get update
+       - run:
+           name: Install some packages
+           command: sudo apt-get install dirmngr gnupg apt-transport-https ca-certificates
+       - run:
+           name: Get thing from key
+           command: sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF
+       - run:
+           name: Select stable-xenial
+           command: echo "deb https://download.mono-project.com/repo/ubuntu stable-xenial main" | sudo tee /etc/apt/sources.list.d/mono-official-stable.list
+       - run:
+           name: Update again
+           command: sudo apt-get update
+       - run:
+           name: Install mono-complete
+           command: sudo apt-get install -y mono-complete
        - run:
            name: Install nodejs
            command: sudo apt install nodejs
        - run:
            name: Install toml parser
            command: npm install toml
-       - run:
-           name: Give permission to /obrya for check program
-           command: chmod +x ./obrya
        - run:
            name: Check program
            command: node .circleci/index.js
