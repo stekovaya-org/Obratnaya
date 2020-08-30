@@ -238,32 +238,38 @@ class MainClass {
         continue;
       }
       if(sec == "data"){
-        string rp = Regex.Replace(aline,"^(?:\t\t|    )([^\n]+)$","$1");
+        string rp = Regex.Replace(aline,"^(?:\t|    )([^\n]+)$","$1");
         if(rp.StartsWith(";")){
           continue;
-        }else if(rp.StartsWith(".text ")){
-          string rpl = Regex.Replace(Regex.Replace(rp,@"^\.text ([^\n]+)$","$1"),@"\$<([0123456789ABCDEFabcdef]+)>",m=>(Convert.ToChar(Convert.ToInt32(m.Groups[1].ToString(),16)).ToString()).ToString());
+        }else if(Regex.IsMatch(rp,@"^\.text[ \t]+")){
+          string rpl = Regex.Replace(Regex.Replace(rp,@"^\.text[ \t]+([^\n]+)$","$1"),@"\$<([0123456789ABCDEFabcdef]+)>",m=>(Convert.ToChar(Convert.ToInt32(m.Groups[1].ToString(),16)).ToString()).ToString());
           IL.Emit(OpCodes.Ldstr,rpl);
           IL.Emit(OpCodes.Ldc_I4,dstk.Count);
           IL.Emit(OpCodes.Stelem,typeof(string));
           dstk.Add(Gen(rpl,"text"));
           _c = _c.Append("    _d.Add(Gen(\"" + rpl.Replace("\"","\\\"") + "\",\"text\"));");
-        }else if(rp.StartsWith(".decimal ")){
-          string rpl = Regex.Replace(rp,@"^\.decimal ([^\n]+)$","$1");
+        }else if(Regex.IsMatch(rp,@"^\.decimal[ \t]+")){
+          string rpl = Regex.Replace(rp,@"^\.decimal[ \t]+([^\n]+)$","$1");
           if(!Check(rpl,typeof(decimal))) Error(i,aline,"Cannot convert text to decimal:");
           IL.Emit(OpCodes.Ldc_R4,Single.Parse(rpl));
           IL.Emit(OpCodes.Ldc_I4,dstk.Count);
           IL.Emit(OpCodes.Stelem_R4);
           dstk.Add(Gen(rpl,"decimal"));
           _c = _c.Append("    _d.Add(Gen(\"" + rpl + "\",\"decimal\"));");
-        }else if(rp.StartsWith(".boolean ")){
-          string rpl = Regex.Replace(rp,@"^\.boolean ([^\n]+)$","$1");
+        }else if(Regex.IsMatch(rp,@"^\.boolean[ \t]+")){
+          string rpl = Regex.Replace(rp,@"^\.boolean[ \t]+([^\n]+)$","$1");
           if(rpl != "0" && rpl != "1") Error(i,aline,"Cannot convert to boolean:");
           IL.Emit(OpCodes.Ldc_I4,int.Parse(rpl));
           IL.Emit(OpCodes.Ldc_I4,dstk.Count);
           IL.Emit(OpCodes.Stelem_I4);
           dstk.Add(Gen(rpl,"boolean"));
           _c = _c.Append("    _d.Add(Gen(\"" + rpl + "\",\"boolean\"));");
+        }else if(rp == ".null"){
+          IL.Emit(OpCodes.Ldstr,"");
+          IL.Emit(OpCodes.Ldc_I4,dstk.Count);
+          IL.Emit(OpCodes.Stelem,typeof(string));
+          dstk.Add(Gen("","null"));
+          _c = _c.Append("    _d.Add(Gen(\"\",\"null\"));");
         }else if(rp == ".empty"){
           IL.Emit(OpCodes.Ldstr,"");
           IL.Emit(OpCodes.Ldc_I4,dstk.Count);
@@ -274,11 +280,11 @@ class MainClass {
           Error(i,aline,"Unknown prefix:");
         }
       }else if(sec == "main"){
-        string rp = Regex.Replace(aline,"^(?:\t\t|    )([^\n]+)$","$1");
+        string rp = Regex.Replace(aline,"^(?:\t|    )([^\n]+)$","$1");
         if(string.IsNullOrWhiteSpace(aline)){
           continue;
         }
-        if(!aline.StartsWith("\t\t") && !aline.StartsWith("    ")){
+        if(!aline.StartsWith("\t") && !aline.StartsWith("    ")){
           Error(i,aline,"Illegal indent detected");
         }
         if(rp.StartsWith("/*")) empo = true;
@@ -287,6 +293,7 @@ class MainClass {
           empo = false;
           continue;
         }
+        rp = Regex.Replace(rp,@"^([^ ]+)[ \t]+","$1 ");
         if(rp.StartsWith(";")){
           continue;
         }else if(rp.StartsWith("len ")){

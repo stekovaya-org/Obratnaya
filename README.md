@@ -14,6 +14,7 @@ Define data / main section
 #include <util/exitcodes.oba>
 #include <util/error.oba>
 #include <util/version.oba>
+#include <util/number.oba>
 #include custom.oba
 .data:
     .text Text data

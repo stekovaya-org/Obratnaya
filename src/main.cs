@@ -5,6 +5,7 @@ using System.Text.RegularExpressions;
 using static Data;
 using static Obratnaya;
 
+namespace obrya {
 class MainClass {
   public static void Center(string ascii){
     var spcs = new string[(int)Math.Abs(Math.Floor((decimal)((Console.WindowWidth - ascii.Replace("\r","").Split(new char[]{'\n'}).Select(x=>x.Length).ToArray().Max()) / 2)))];
@@ -67,4 +68,5 @@ class MainClass {
       }
     }
   }
+}
 }
