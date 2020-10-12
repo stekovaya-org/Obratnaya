@@ -3,10 +3,10 @@ using System;
 public class Data {
   public class Version {
     public static readonly string Prefix = "";
-    public static readonly string Suffix = "b";
+    public static readonly string Suffix = "";
     public static readonly string Major = "1";
     public static readonly string Minor = "3";
-    public static readonly string Patch = "1";
+    public static readonly string Patch = "2";
     public static readonly string FullVersion = Prefix + Major + "." + Minor + "." + Patch + Suffix;
   }
   public class Library {

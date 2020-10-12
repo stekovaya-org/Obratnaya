@@ -7,8 +7,12 @@ using System.IO;
 using System.Reflection.Emit;
 using System.Reflection;
 using System.Threading;
+using System.Xml;
 
 public static class Extension {
+  public static string ToUpperCase(this string st){
+    return st.ToUpper();
+  }
   public static string ToUnixTimeMilliseconds(this DateTime dt){
     return ((DateTimeOffset)dt).ToUnixTimeMilliseconds().ToString();
   }
@@ -25,7 +29,7 @@ public static class Extension {
     return str + srt + "\r\n";
   }
   public static string[] Ccut(this string str,string com){
-    return Regex.Replace(str,com + " ([^\n]+)","$1").Split(new char[]{','});
+    return Regex.Replace(str,"^" + com + " ([^\n]+)$","$1").Split(new char[]{','});
   }
   public static void Underflow(this Stack stk,int u,int i,string line){
     if(stk.Count < u){
@@ -34,8 +38,11 @@ public static class Extension {
   }
 }
 public class Obratnaya {
+  public static XmlDocument xml = new XmlDocument();
   public static bool erx = false;
+  public static bool adv = false;
   public static bool erd = false;
+  public static bool oti = false;
   public static string erc = "";
   public static int slft = 0;
   public static string[] libraries = Data.Library.Libraries;
@@ -78,14 +85,36 @@ public class Obratnaya {
       ["type"] = type
     };
   }
+  private static string cline;
   public static void Error(int i,string line,string content){
-    erc = erc == "" ? "\x1b[1m:" + (i + 1 - slft) + ": \x1b[m\x1b[31m" + (content.EndsWith(":") ? content : content + ":") + "\x1b[m\r\n" + line : erc;
+    erc = erc == "" ? "\x1b[1m:" + (i + 1 - slft).ToString() + ": \x1b[m\x1b[31m" + (content.EndsWith(":") ? content : content + ":") + "\x1b[m\r\n" + line : erc;
+    var melmn = xml.CreateElement("error");
+    var selmn = xml.CreateElement("line");
+    selmn.InnerText = (i - slft).ToString();
+    melmn.AppendChild(selmn);
+    selmn = xml.CreateElement("content");
+    selmn.InnerText = content.EndsWith(":") ? content : content + ":";
+    melmn.AppendChild(selmn);
+    selmn = xml.CreateElement("command");
+    selmn.InnerText = line;
+    melmn.AppendChild(selmn);
+    xml.DocumentElement["program"].AppendChild(melmn);
+    if(adv) xml.Save("log.xml");
     if(erx) Console.Error.WriteLine(erc);
     erd = true;
     if(erx) Environment.Exit(1);
   }
   public static void Error(string content){
-    erc = erc == "" ? "\x1b[1m:FATAL: \x1b[m\x1b[31m" + (content.EndsWith(":") ? content : content + ":") + "\x1b[m" : erc;
+    erc = erc == "" ? "\x1b[1m:FATAL: \x1b[m\x1b[31m" + content + "\x1b[m" : erc;
+    var melmnn = xml.CreateElement("error");
+    var selmnn = xml.CreateElement("line");
+    selmnn.InnerText = "FATAL";
+    melmnn.AppendChild(selmnn);
+    selmnn = xml.CreateElement("content");
+    selmnn.InnerText = Regex.Replace(content,@"\x1b\[\d*[A-Za-z]","");
+    melmnn.AppendChild(selmnn);
+    xml.DocumentElement["program"].AppendChild(melmnn);
+    if(adv) xml.Save("log.xml");
     if(erx) Console.Error.WriteLine(erc);
     erd = true;
     if(erx) Environment.Exit(1);
@@ -97,11 +126,14 @@ public class Obratnaya {
     erx = ere;
     erd = false;
     slft = 0;
+    Action chkl = ()=>{
     for(int lcn = 0; lcn < libraries.Length; lcn++){
       if(!File.Exists(AppDomain.CurrentDomain.BaseDirectory + "lib" + Path.DirectorySeparatorChar.ToString() + libraries[lcn].Replace("\\",Path.DirectorySeparatorChar.ToString()))){
-        Error("Missing library: [" + libraries[lcn] + "], URL: [\x1b[m https://github.com/stekovaya-org/Obratnaya/blob/master/lib/" + libraries[lcn] + "/ \x1b[31m]");if(!erx){return;}
+        Error("Missing library: [" + libraries[lcn] + "], URL: [\x1b[m https://github.com/stekovaya-org/Obratnaya/blob/master/lib/" + libraries[lcn] + "/ \x1b[31m]");
+        if(!erx) return;
       }
     }
+    };
     var dstk = new System.Collections.Generic.List<Hashtable>();
     var secl = new System.Collections.Generic.Dictionary<string,int[]>();
     var varh = new Hashtable{
@@ -132,6 +164,7 @@ public class Obratnaya {
     MethodBuilder tMainMethod = tDynamicClass.DefineMethod("Main", MethodAttributes.Public | MethodAttributes.Static, typeof(void), new Type[] { typeof(string[]) });
     ILGenerator IL = tMainMethod.GetILGenerator();
     bool rb = false;
+    int labl = 0;
     var cs = new System.Collections.Generic.List<string>();
     var ns = new System.Collections.Generic.List<int>();
     string _c = @"using System;
@@ -156,14 +189,76 @@ class MainClass {
 ";
     var print = typeof(Console).GetMethod("WriteLine", new Type[]{ typeof(string) });
     if(Regex.Matches(code,@"/\*").Count != Regex.Matches(code,@"\*/").Count) Error("Unmatched comment bracket:");
+    xml.LoadXml("<?xml version=\"1.0\" encoding=\"UTF-8\"?><log></log>");
+    var elem = xml.CreateElement("info");
+    var melm = xml.CreateElement("version");
+    var selm = xml.CreateElement("major");
+    selm.InnerText = Data.Version.Major;
+    melm.AppendChild(selm);
+    selm = xml.CreateElement("minor");
+    selm.InnerText = Data.Version.Minor;
+    melm.AppendChild(selm);
+    selm = xml.CreateElement("patch");
+    selm.InnerText = Data.Version.Patch;
+    melm.AppendChild(selm);
+    selm = xml.CreateElement("prefix");
+    selm.InnerText = Data.Version.Prefix;
+    melm.AppendChild(selm);
+    selm = xml.CreateElement("suffix");
+    selm.InnerText = Data.Version.Suffix;
+    melm.AppendChild(selm);
+    selm = xml.CreateElement("full");
+    selm.InnerText = Data.Version.FullVersion;
+    melm.AppendChild(selm);
+    elem.AppendChild(melm);
+    melm = xml.CreateElement("program");
+    melm.InnerText = code;
+    elem.AppendChild(melm);
+    melm = xml.CreateElement("unixdate");
+    selm = xml.CreateElement("local");
+    selm.InnerText = DateTime.Now.ToUnixTimeMilliseconds();
+    melm.AppendChild(selm);
+    selm = xml.CreateElement("utc");
+    selm.InnerText = DateTime.UtcNow.ToUnixTimeMilliseconds();
+    melm.AppendChild(selm);
+    elem.AppendChild(melm);
+    xml.DocumentElement.AppendChild(elem);
+    elem = xml.CreateElement("program");
+    elem.InnerText = "";
+    xml.DocumentElement.AppendChild(elem);
+    chkl();
     loadsf:
     for(int i = 0; i < all.Length; i++){
+      try{
       //Console.WriteLine(i.ToString() + ":" + (cs.Count != 0 ? cs[cs.Count - 1] : ""));
+      elem = xml.CreateElement("data");
+      melm = xml.CreateElement("stack");
+      for(int k = 0; k < stk.Count; k++){
+        selm = xml.CreateElement("data");
+        var _pd = (Hashtable)(stk.ToArray()[k]);
+        var telm = xml.CreateElement("type");
+        telm.InnerText = _pd["type"].ToString();
+        selm.AppendChild(telm);
+        telm = xml.CreateElement("content");
+        telm.InnerText = _pd["data"].ToString();
+        selm.AppendChild(telm);
+        melm.AppendChild(selm);
+      }
+      elem.AppendChild(melm);
+      melm = xml.CreateElement("line");
+      melm.InnerText = (i - slft).ToString();
+      elem.AppendChild(melm);
+      melm = xml.CreateElement("command");
+      melm.InnerText = all[i];
+      elem.AppendChild(melm);
+      xml.DocumentElement["program"].AppendChild(elem);
+      if(adv) xml.Save("log.xml");
       varh["local_1"] = Gen(DateTime.Now.ToUnixTimeMilliseconds(),"decimal");
       varh["utc_1"] = Gen(DateTime.UtcNow.ToUnixTimeMilliseconds(),"decimal");
       varh["line"] = Gen((i + 1).ToString(),"decimal");
       string aline = all[i];
       string[] line = aline.Split(" ");
+      cline = aline;
       if(cs.Count != 0){
       if(rb && i == secl[cs[cs.Count - 1]][1] + 1){
         if(cs.Count == 1){
@@ -183,10 +278,11 @@ class MainClass {
         continue;
       }
       }
-      if(line[0] == ".main:"){
+      if(line[0] == ".main:" || aline.ToUpperCase() == "SECTION MAIN:"){
+        if(oti) return;
         sec = "main";
         continue;
-      }else if(line[0] == ".data:"){
+      }else if(line[0] == ".data:" || aline.ToUpperCase() == "SECTION DATA:"){
         sec = "data";
         string ln;
         if(line.Length <= 1){
@@ -198,8 +294,12 @@ class MainClass {
         IL.Emit(OpCodes.Ldc_I4,int.Parse(ln));
         IL.Emit(OpCodes.Newarr,typeof(object));
         continue;
-      }else if(line[0].StartsWith("_") && line[0].EndsWith(":") && sec != "main"){
-        sec = Regex.Replace(line[0],@"_([^:]+):","$1");
+      }else if(line[0].StartsWith("_") && aline.EndsWith(":") && sec != "main"){
+        sec = Regex.Replace(aline,@"_([^:]+):","$1");
+        secl[sec] = new int[]{i,0,0};
+        continue;
+      }else if(line[0].ToUpperCase() == "ACTION" && aline.EndsWith(":") && sec != "main"){
+        sec = Regex.Replace(aline,@"(?:[Aa][Cc][Tt][Ii][Oo][Nn]) ([^:]+):","$1");
         secl[sec] = new int[]{i,0,0};
         continue;
       }else if(line[0] == "#library" && line.Length >= 2){
@@ -236,6 +336,21 @@ class MainClass {
         }
       }else if(line[0].StartsWith(";")){
         continue;
+      }else if(line[0].StartsWith("#define")){
+        Regex rgx = new Regex(@"^#define ([\S\s]+) = ([\S\s]+)$");
+        if(oti){
+          if(varh.ContainsKey(rgx.Replace(aline,"$1"))){
+            if(((Hashtable)varh[rgx.Replace(aline,"$1")])["data"].ToString() != rgx.Replace(string.Join(" ",line),"$2")){
+              Console.Write("[CHANGED] ");
+            }else{
+              goto bruh;
+            }
+          }
+          Console.WriteLine(Regex.Replace(string.Join(" ",line),@"^#define ([\S\s]+) = ([\S\s]+)$","$1: $2"));
+          bruh:
+          ;
+        }
+        varh[rgx.Replace(string.Join(" ",line),"$1")] = Gen(rgx.Replace(string.Join(" ",line),"$2"),"text");
       }
       if(sec == "data"){
         string rp = Regex.Replace(aline,"^(?:\t|    )([^\n]+)$","$1");
@@ -296,6 +411,47 @@ class MainClass {
         rp = Regex.Replace(rp,@"^([^ ]+)[ \t]+","$1 ");
         if(rp.StartsWith(";")){
           continue;
+        }else if(rp == "dlabel"){
+          labl = i;
+        }else if(rp == "comeback"){
+          i = labl;
+        }else if(rp.StartsWith("fread ")){
+          string[] cp = rp.Ccut("fread");
+          if(cp.Length != 1) Error(i,aline,"Arguments must be 1");
+          if(cp[0] == "@"){
+            stk.Underflow(1,i,aline);
+            var stv = (Hashtable)stk.Pop();
+            if(!File.Exists(stv["data"].ToString())) Error(i,aline,"File not found");
+            stk.Push(Gen(File.ReadAllText(stv["data"].ToString()),"text"));
+          }else{
+            Error(i,aline,"Unknown format:");
+          }
+        }else if(rp.StartsWith("fwrite ")){
+          string[] cp = rp.Ccut("fwrite");
+          if(cp.Length != 2) Error(i,aline,"Arguments must be 2");
+          string[] qc = {"",""};
+          if(cp[0] == "@"){
+            stk.Underflow(1,i,aline);
+            qc[1] = ((Hashtable)stk.Pop())["data"].ToString();
+          }else{
+            Error(i,aline,"Unknown format:");
+          }
+          if(cp[1] == "@"){
+            stk.Underflow(1,i,aline);
+            qc[0] = ((Hashtable)stk.Pop())["data"].ToString();
+          }else{
+            Error(i,aline,"Unknown format:");
+          }
+          File.WriteAllText(qc[0],qc[1]);
+        }else if(rp == "read"){
+          stk.Push(Gen(Console.ReadLine(),"text"));
+        }else if(rp == "readk"){
+          var ki = Console.ReadKey();
+          if(ki.Key == ConsoleKey.Escape){
+            stk.Push(Gen("-1","decimal"));
+          }else{
+            stk.Push(Gen(Convert.ToInt32(ki.KeyChar).ToString(),"decimal"));
+          }
         }else if(rp.StartsWith("len ")){
           string[] cp = rp.Ccut("len");
           if(cp.Length != 1) Error(i,aline,"Arguments must be 1:");
@@ -1057,7 +1213,7 @@ class MainClass {
           if(cp[0] == "@"){
             stk.Underflow(1,i,aline);
             sd = (Hashtable)stk.Pop();
-            if(!Check(cp[0],typeof(uint))) Error(i,aline,"Cannot emit text by not positive integer:");
+            if(!Check(sd["data"].ToString(),typeof(uint))) Error(i,aline,"Cannot emit text by not positive integer:");
             sd["type"] = "text";
             sd["data"] = Convert.ToChar(int.Parse(sd["data"].ToString())).ToString();
             _c = _c.Append("    _da[0] = (decimal)(((Hashtable)_s.Pop())[\"data\"].ToString());");
@@ -1109,6 +1265,9 @@ class MainClass {
       //if(File.Exists("out.cs")) File.Delete("out.cs");
       //File.WriteAllText("out.cs","");
       //File.WriteAllText("out.cs",_c + "  }\r\n}");
+      }catch(OverflowException){
+        Error(i,cline,"Overflowed.\r\nValue was:\r\n\tBigger than  : " + Decimal.MaxValue.ToString() + "\r\n\t\tor\r\n\tSmaller than : " + Decimal.MinValue.ToString() + "\r\nError generated by");
+      }
     }
   }
 }
