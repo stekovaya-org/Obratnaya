@@ -1,14 +1,15 @@
 ![](https://storage.googleapis.com/replit/images/1596342110450_7674509b2f36a76d1c139806e2b0cf08.jpeg)
 # Obratnaya [oʊbɹɑtnɑjɑ]
 
-***You must be install .NET or mono***
+***You must install .NET or mono***
 
-***Transpiler is failing, dont use please***
+***~~Transpiler is failing, don't use please~~ Transpiler was abolished.***
 
 ## The Section
 Define data / main section
 ```
 ; comment
+#define key = value
 #include <math.oba>
 #include <stdout.oba>
 #include <util/exitcodes.oba>
@@ -394,4 +395,48 @@ len @
 len 0
 ; len @
 ; len decimal
+```
+
+### read
+Read one line
+```
+read
+```
+
+### readk
+Read one key
+
+**Note:** It returns decimal
+```
+readk
+```
+
+### fread
+Read file
+```
+fread @
+; fread @
+```
+
+### fwrite
+Write to file
+
+**Note:** First argument is for filename, Second argument is for content
+```
+fwrite @,@
+; fwrite @,@
+```
+
+### dlabel
+Define label for `comeback`
+```
+dlabel
+; dlabel
+```
+
+### comeback
+Come back to `dlabel`
+```
+comeback
+; comeback
 ```

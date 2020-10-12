@@ -1,1 +1,1 @@
-run = "clear && LD_PRELOAD=\"\" && mcs src/*.cs -out:obrya.exe && mkbundle --no-machine-config --no-config obrya.exe --simple -o obrya && rm -f temp.* && clear && ./obrya main.oba"
+run = "clear && LD_PRELOAD=\"\" && mcs src/*.cs -out:obrya.exe && mkbundle --no-machine-config --no-config obrya.exe --simple -o obrya&& rm -f temp.* && clear && ./obrya --i main.oba && echo -------------------------------- && ./obrya -l main.oba ; rm log.xml"
